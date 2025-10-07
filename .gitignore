@@ -1,0 +1,73 @@
+# Binaries for programs
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*_test
+
+# mysql - generated local data
+**/DATA/*
+
+# Temporary files
+**/tmp/*
+
+# Operating system generated files
+.DS_Store
+Thumbs.db
+
+
+**/dist
+**/node_modules
+
+# Logs
+**/logs
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+**/coverage
+**/performance
+**/performance/*
+**/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Internal Docs
+
+/docs-internal
+
+**/env/*
+!**/env/test.env
+!**/env/development.env
+
+**/.angular
+**/DATA
+
+# Misc
+
+copy.sh
+backend/swagger/openapi.json
+docker-compose.dev.yml
+backend/swagger/openapi.json

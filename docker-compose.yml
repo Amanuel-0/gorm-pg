@@ -1,0 +1,50 @@
+services:
+  backend:
+    container_name: gormpg-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.${COMPOSE_PROJECT_ENV}
+    volumes: ["./:/app"]
+    command: air -c .air.toml
+    depends_on: [db]
+    networks:
+      - gormpg_db_net
+
+
+  db:
+    image: mariadb:11.0.2
+    container_name: gormpg-db
+    volumes:
+      - ./DATA/db_data:/var/lib/mysql
+    restart: unless-stopped
+    env_file:
+      - .env.${COMPOSE_PROJECT_ENV}
+    environment:
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ}
+    ports: ["3307:3306"]
+    networks:
+      - gormpg_db_net
+
+  db-adminer:
+    image: adminer:4.8.1
+    container_name: gormpg-db-adminer
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - gormpg_db_net
+  
+networks:
+  gormpg_db_net:
+    driver: bridge
+
+volumes:
+  db_data:
