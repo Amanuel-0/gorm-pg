@@ -24,20 +24,25 @@ func (r Role) IsValid() bool {
 }
 
 type User struct {
-	gorm.Model
-	ID              uint       `json:"id" gorm:"primaryKey"`
-	Email           string     `json:"email" gorm:"unique;not null"`
-	Phone           string     `json:"phone" gorm:"unique;not null"`
+	// gorm.Model
+	ID              uint       `json:"id,omitempty" gorm:"primaryKey"`
+	Email           string     `json:"email,omitempty" gorm:"unique;not null"`
+	Phone           string     `json:"phone,omitempty" gorm:"unique;not null"`
 	PasswordHash    string     `json:"-" gorm:"column:password_hash;not null"`
-	EmailVerifiedAt *time.Time `json:"email_verified_at" gorm:"column:email_verified_at"`
-	PhoneVerifiedAt *time.Time `json:"phone_verified_at" gorm:"column:phone_verified_at"`
-	FirstName       string     `json:"first_name" gorm:"size:100"`
-	LastName        string     `json:"last_name" gorm:"size:100"`
-	IsActive        bool       `json:"is_active" gorm:"default:true"`
-	Role            Role       `json:"role" gorm:"type:enum('user','admin','moderator','system');default:'user'"`
-	Local           string     `json:"local" gorm:"default:'en'"`
+	EmailVerifiedAt *time.Time `json:"email_verified_at,omitempty" gorm:"column:email_verified_at"`
+	PhoneVerifiedAt *time.Time `json:"phone_verified_at,omitempty" gorm:"column:phone_verified_at"`
+	FirstName       string     `json:"first_name,omitempty" gorm:"size:100"`
+	LastName        string     `json:"last_name,omitempty" gorm:"size:100"`
+	IsActive        bool       `json:"is_active,omitempty" gorm:"default:true"`
+	Role            Role       `json:"role,omitempty" gorm:"type:enum('user','admin','moderator','system');default:'user'"`
+	Local           string     `json:"local,omitempty" gorm:"default:'en'"`
+
+	// timestamps
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships
 	// UserProfile UserProfile `json:"user_profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserProfile UserProfile `json:"user_profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserProfile UserProfile `json:"user_profile,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

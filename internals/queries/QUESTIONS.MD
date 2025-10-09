@@ -8,14 +8,14 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
 ### ✅ Simple tasks
 
- - [ ] Create a new user with a profile.
- - [ ] Fetch a user by email.
- - [ ] Update a user’s display name and avatar.
- - [ ] Soft delete a user (set `deleted_at`).
- - [ ] Create an author and a few genres.
- - [ ] Create a book with an author and assign multiple genres.
- - [ ] Retrieve all books owned by a specific user.
- - [ ] Fetch a book including its author and genres.
+ - [x] Create a new user with a profile.
+ - [x] Fetch a user by email.
+ - [x] Update a user’s display name and avatar.
+ - [x] Soft delete a user (set `deleted_at`).
+ - [x] Create an author and a few genres.
+ - [x] Create a book with an author, owner and assign multiple genres.
+ - [x] Retrieve all books owned by a specific user.
+ - [x] Fetch a book including its author and genres.
  - [ ] List all users who prefer a certain genre.
  - [ ] Add a new subscription plan.
 

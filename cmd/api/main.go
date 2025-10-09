@@ -9,7 +9,8 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/database/seeder"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/simple_tasks"
+	"github.com/Amanuel-0/gorm-pg/internals/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -31,13 +32,77 @@ func main() {
 	}
 	// Migrate database tables
 	autoMigrateTables(db)
+	//
+	//
 	// Seed initial data (idempotent)
-	if err := seeder.SeedAll(db); err != nil {
-		log.Fatalf("failed to seed database: %v", err)
-	}
-	// Queries
-	// queries.GetUser(db)
+	// if err := seeder.SeedAll(db); err != nil {
+	// 	log.Fatalf("failed to seed database: %v", err)
+	// }
+	//
+	//
 
+	// Queries
+	// simple_tasks.CreateAuthor(db)
+	// simple_tasks.CreateBook(db)
+	// simple_tasks.GetBooksOfUser2(db)
+	// simple_tasks.GetBooksOfUserWithGenreStr(db)
+	// simple_tasks.GetBooksOfUserAwesome(db)
+	simple_tasks.GetBookById(db)
+
+	// playWithGORMqueries(db)
+
+}
+
+func autoMigrateTables(db *gorm.DB) {
+	if err := db.AutoMigrate(
+		&models.ActivityLog{},
+		&models.Author{},
+		&models.BookImage{},
+		&models.BookReview{},
+		&models.Book{},
+		&models.ChatThread{},
+		&models.CommunityMember{},
+		&models.CommunityMessage{},
+		&models.CommunityThread{},
+		&models.Community{},
+		&models.Exchange{},
+		&models.Genre{},
+		// locations starts
+		&models.Country{},
+		&models.State{},
+		&models.City{},
+		// locations ends
+		&models.MessageQuotaUsage{},
+		&models.Message{},
+		&models.ModerationAction{},
+		&models.Notification{},
+		&models.Report{},
+		&models.SubscriptionPlan{},
+		&models.Subscription{},
+		&models.UserProfile{},
+		&models.UserRating{},
+		&models.User{},
+	); err != nil {
+		log.Fatalf("failed to migrate database: %v", err)
+	}
+}
+
+// legacy seeder function removed in favor of seeder.SeedAll
+
+// a function that can be used to marshal and print the output
+// to a terminal in a pretty format
+func prettyPrint(data interface{}, message string) {
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		log.Fatalf("failed to marshal data: %v", err)
+	}
+	fmt.Printf("%s: %s\n", message, string(jsonData))
+}
+
+// collectFieldPtrs recursively walks a struct and collects pointers to fields.
+
+// Play with GORM database queries
+func playWithGORMqueries(db *gorm.DB) {
 	// ctx := context.Background()
 	// user, err := gorm.G[models.User](db).First(ctx)
 	// method 1
@@ -76,7 +141,7 @@ func main() {
 		Select("users.id, users.first_name, users.last_name, user_profiles.bio, user_profiles.avatar_url, user_profiles.latitude, user_profiles.longitude, user_profiles.linkedin").
 		Joins("left join user_profiles on user_profiles.user_id = users.id").
 		Row().
-		Scan(collectFieldPtrs(reflect.ValueOf(&userScan).Elem())...)
+		Scan(util.CollectFieldPtrs(reflect.ValueOf(&userScan).Elem())...)
 	if rs != nil {
 		log.Fatalf("failed to scan user: %v", rs)
 	}
@@ -138,72 +203,4 @@ func main() {
 
 	// prettyPrint(result, "Joined User")
 
-}
-
-func autoMigrateTables(db *gorm.DB) {
-	if err := db.AutoMigrate(
-		&models.ActivityLog{},
-		&models.Author{},
-		&models.BookImage{},
-		&models.BookReview{},
-		&models.Book{},
-		&models.ChatThread{},
-		&models.CommunityMember{},
-		&models.CommunityMessage{},
-		&models.CommunityThread{},
-		&models.Community{},
-		&models.Exchange{},
-		&models.Genre{},
-		// locations starts
-		&models.Country{},
-		&models.State{},
-		&models.City{},
-		// locations ends
-		&models.MessageQuotaUsage{},
-		&models.Message{},
-		&models.ModerationAction{},
-		&models.Notification{},
-		&models.Report{},
-		&models.SubscriptionPlan{},
-		&models.Subscription{},
-		&models.UserProfile{},
-		&models.UserRating{},
-		&models.User{},
-	); err != nil {
-		log.Fatalf("failed to migrate database: %v", err)
-	}
-}
-
-// legacy seeder function removed in favor of seeder.SeedAll
-
-// a function that can be used to marshal and print the output
-// to a terminal in a pretty format
-func prettyPrint(data interface{}, message string) {
-	jsonData, err := json.MarshalIndent(data, "", "  ")
-	if err != nil {
-		log.Fatalf("failed to marshal data: %v", err)
-	}
-	fmt.Printf("%s: %s\n", message, string(jsonData))
-}
-
-// collectFieldPtrs recursively walks a struct and collects pointers to fields.
-func collectFieldPtrs(v reflect.Value) []any {
-	var result []any
-
-	for i := 0; i < v.NumField(); i++ {
-		field := v.Field(i)
-
-		// If it's a struct, recurse
-		if field.Kind() == reflect.Struct {
-			result = append(result, collectFieldPtrs(field)...)
-			continue
-		}
-
-		// Take addressable value
-		if field.CanAddr() {
-			result = append(result, field.Addr().Interface())
-		}
-	}
-
-	return result
 }
