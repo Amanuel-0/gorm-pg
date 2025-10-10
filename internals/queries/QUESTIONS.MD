@@ -17,7 +17,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Retrieve all books owned by a specific user.
  - [x] Fetch a book including its author and genres.
  - [x] List all users who prefer a certain genre.
- - [ ] Add a new subscription plan.
+ - [x] Add a new subscription plan.
 
 ### ⚙️ Intermediate (1–N and N–M)
 

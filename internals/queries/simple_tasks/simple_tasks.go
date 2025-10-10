@@ -2,6 +2,7 @@ package simple_tasks
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -492,4 +493,34 @@ func GetAllUsersByPreferredGenre(db *gorm.DB) {
 
 	util.PrettyPrint(users, "GetAllUsersByPreferredGenre/s")
 
+}
+
+// Add a new subscription plan.
+func CreateSubsPlan(db *gorm.DB) {
+	// Define example feature list as JSON
+	features, _ := json.Marshal([]string{
+		"Unlimited Projects",
+		"Priority Support",
+		"Custom Branding",
+		"Team Collaboration Tools",
+		"Advanced Analytics Dashboard",
+	})
+
+	var subp = models.SubscriptionPlan{
+		Slug:        "pro-annual",
+		Name:        "Pro Annual Plan",
+		Description: "Best for teams and professionals who need advanced features and annual savings.",
+		PriceCents:  9900, // $99.00
+		Currency:    "USD",
+		Interval:    "year",
+		Features:    features,
+		Active:      true,
+	}
+
+	// fetches if it already exists or create it
+	if err := db.FirstOrCreate(&subp).Error; err != nil {
+		fmt.Printf("error creating subscription plan: %v", err)
+	}
+
+	util.PrettyPrint(subp, "CreateSubsPlan: method")
 }

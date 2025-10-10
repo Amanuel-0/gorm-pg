@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
@@ -25,13 +27,19 @@ func (i Interval) IsValid() bool {
 /** enums ends */
 
 type SubscriptionPlan struct {
-	gorm.Model
-	Slug        string         `gorm:"size:100;not null;unique"`
-	Name        string         `gorm:"size:200;not null"`
-	Description string         `gorm:"type:text"`
-	PriceCents  int            `gorm:"not null"`
-	Currency    string         `gorm:"size:8;not null;default:USD"`
-	Interval    string         `gorm:"type:enum('month','year');not null"`
-	Features    datatypes.JSON `gorm:"type:json"`
-	Active      bool           `gorm:"type:tinyint(1);not null;default:1"`
+	// gorm.Model
+	ID          uint           `json:"id,omitempty" gorm:"primaryKey"`
+	Slug        string         `json:"slug,omitempty" gorm:"size:100;not null;unique"`
+	Name        string         `json:"name,omitempty" gorm:"size:200;not null"`
+	Description string         `json:"description,omitempty" gorm:"type:text"`
+	PriceCents  int            `json:"price_cents,omitempty" gorm:"not null"`
+	Currency    string         `json:"currency,omitempty" gorm:"size:8;not null;default:USD"`
+	Interval    string         `json:"interval,omitempty" gorm:"type:enum('month','year');not null"`
+	Features    datatypes.JSON `json:"features,omitempty" gorm:"type:json"`
+	Active      bool           `json:"active,omitempty" gorm:"type:tinyint(1);not null;default:1"`
+
+	// timestamp
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 }

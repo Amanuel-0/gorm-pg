@@ -48,7 +48,8 @@ func main() {
 	// simple_tasks.GetBooksOfUserWithGenreStr(db)
 	// simple_tasks.GetBooksOfUserAwesome(db)
 	// simple_tasks.GetBookById(db)
-	simple_tasks.GetAllUsersByPreferredGenre(db)
+	// simple_tasks.GetAllUsersByPreferredGenre(db)
+	simple_tasks.CreateSubsPlan(db)
 
 	// playWithGORMqueries(db)
 
