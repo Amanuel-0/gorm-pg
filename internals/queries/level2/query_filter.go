@@ -38,3 +38,24 @@ func GetBookBetweenDates(db *gorm.DB) {
 	var count = len(books)
 	fmt.Println("count: ", count)
 }
+
+// Find all users who haven’t verified their email.
+// passed - no enough information, and it seems it is repetitive
+func GetUsersWithVerifiedEmail(db *gorm.DB) {}
+
+// Retrieve all active subscriptions and their plans.
+func GetActiveSubsWithPlan(db *gorm.DB) {
+	var subs []models.Subscription
+	if err := db.Model(&models.Subscription{}).
+		Where("status = ?", models.SubscriptionStatusActive).
+		Preload("Plan", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "name", "price_cents")
+		}).
+		Select("id", "user_id", "plan_id", "status").
+		Find(&subs).Error; err != nil {
+
+		fmt.Printf("error fetching active subs: %v", err)
+	}
+
+	util.PrettyPrint(subs, "GetActiveSubsWithPlan")
+}

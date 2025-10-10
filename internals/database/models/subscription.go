@@ -25,15 +25,22 @@ func (s SubscriptionStatus) IsValid() bool {
 }
 
 type Subscription struct {
-	gorm.Model
-	UserID                 uint64             `gorm:"not null;index"`
-	PlanID                 *uint64            `gorm:"index"`
-	ProviderSubscriptionID string             `gorm:"size:255;index"`
-	Status                 SubscriptionStatus `gorm:"type:enum('active','past_due','canceled','trialing','expired');not null;default:'trialing'"`
-	CurrentPeriodStart     *time.Time         `gorm:"type:datetime"`
-	CurrentPeriodEnd       *time.Time         `gorm:"type:datetime"`
-	CancelAtPeriodEnd      bool               `gorm:"type:tinyint(1);default:0"`
+	// gorm.Model
+	ID                     uint               `json:"id,omitempty" gorm:"primaryKey"`
+	UserID                 uint               `json:"user_id,omitempty" gorm:"not null;index"`
+	PlanID                 uint               `json:"plan_id,omitempty" gorm:"index"`
+	ProviderSubscriptionID string             `json:"provider_subscription_id,omitempty" gorm:"size:255;index"`
+	Status                 SubscriptionStatus `json:"status,omitempty" gorm:"type:enum('active','past_due','canceled','trialing','expired');not null;default:'trialing'"`
+	CurrentPeriodStart     *time.Time         `json:"current_period_start,omitempty" gorm:"type:datetime"`
+	CurrentPeriodEnd       *time.Time         `json:"current_period_end,omitempty" gorm:"type:datetime"`
+	CancelAtPeriodEnd      bool               `json:"cancel_at_period_end,omitempty" gorm:"type:tinyint(1);default:0"`
 
-	User User             `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
-	Plan SubscriptionPlan `gorm:"foreignKey:PlanID;constraint:OnDelete:SET NULL"`
+	// timestamps
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
+
+	// relationship
+	User *User            `json:"user,omitempty" gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Plan SubscriptionPlan `json:"plan,omitempty" gorm:"foreignKey:PlanID;constraint:OnDelete:SET NULL"`
 }
