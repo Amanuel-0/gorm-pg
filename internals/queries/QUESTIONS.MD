@@ -39,7 +39,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Find all users whose subscription is expired.
  - [ ] List all users who have ever made a successful payment. (I don't think there is enough ifno to perform this, so passed).
  - [x] Count how many books each user owns.
- - [ ] Retrieve all books with their review averages.
+ - [x] Retrieve all books with their review averages.
  - [ ] List all exchanges in the “requested” state with book and user info.
  - [ ] Fetch messages in a chat thread, sorted newest → oldest.
  - [ ] Find all users who haven’t logged in for 30+ days.

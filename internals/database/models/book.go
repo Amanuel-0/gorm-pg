@@ -53,10 +53,11 @@ type Book struct {
 	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships
-	Owner  User        `json:"owner,omitempty" gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
-	Author Author      `json:"author,omitempty" gorm:"foreignKey:AuthorID;constraint:OnDelete:SET NULL"`
-	Genres []Genre     `json:"genres" gorm:"many2many:book_genres;"`
-	Images []BookImage `json:"images" gorm:"foreignKey:BookID;constraint:OnDelete:CASCADE"`
+	Owner       User         `json:"owner,omitempty" gorm:"foreignKey:OwnerID;constraint:OnDelete:CASCADE"`
+	Author      Author       `json:"author,omitempty" gorm:"foreignKey:AuthorID;constraint:OnDelete:SET NULL"`
+	Genres      []Genre      `json:"genres" gorm:"many2many:book_genres;"`
+	Images      []BookImage  `json:"images" gorm:"foreignKey:BookID;constraint:OnDelete:CASCADE"`
+	BookReviews []BookReview `json:"book_reviews,omitempty" gorm:"foreignKey:BookID"`
 }
 
 //

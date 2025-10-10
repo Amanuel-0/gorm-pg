@@ -73,7 +73,8 @@ func main() {
 	// level2.GetBookBetweenDates(db)
 	// level2.GetActiveSubsWithPlan(db)
 	// level2.GetUsersWithExpiredSub(db)
-	level2.GetUsersBookCount(db)
+	// level2.GetUsersWithBookCount(db)
+	level2.GetBooksWithAvgReview(db)
 
 	// playWithGORMqueries(db)
 

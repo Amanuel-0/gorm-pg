@@ -123,7 +123,7 @@ func GetUsersWithExpiredSub(db *gorm.DB) {
 func GetUsersWithSuccessfulPayment(db *gorm.DB) {}
 
 // Count how many books each user owns (optimized with a single query).
-func GetUsersBookCount(db *gorm.DB) {
+func GetUsersWithBookCount(db *gorm.DB) {
 	type Result struct {
 		UserID    uint   `json:"user_id"`
 		FirstName string `json:"first_name"`
@@ -148,4 +148,27 @@ func GetUsersBookCount(db *gorm.DB) {
 
 	util.PrettyPrint(results, "GetUsersBookCount: method")
 
+}
+
+// Retrieve all books with their review averages.
+func GetBooksWithAvgReview(db *gorm.DB) {
+	type Result struct {
+		BookID    uint    `json:"book_id"`
+		Title     string  `json:"title"`
+		AvgReview float64 `json:"avg_review"`
+	}
+	var results []Result
+
+	subQuery := db.Model(&models.BookReview{}).Select("AVG(rating)").Where("book_reviews.book_id = books.id")
+
+	err := db.Model(&models.Book{}).
+		Select("books.id as book_id, books.title, (?) as avg_review", subQuery).
+		Scan(&results).Error
+
+	if err != nil {
+		fmt.Printf("error fetching books with avg review: %v\n", err)
+		return
+	}
+
+	util.PrettyPrint(results, "GetUsersBookCount: method")
 }
