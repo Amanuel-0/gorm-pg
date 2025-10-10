@@ -121,3 +121,31 @@ func GetUsersWithExpiredSub(db *gorm.DB) {
 // List all users who have ever made a successful payment.
 // passed - no enough information, and it seems it is repetitive
 func GetUsersWithSuccessfulPayment(db *gorm.DB) {}
+
+// Count how many books each user owns (optimized with a single query).
+func GetUsersBookCount(db *gorm.DB) {
+	type Result struct {
+		UserID    uint   `json:"user_id"`
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+		BookCount int    `json:"book_count"`
+	}
+
+	var results []Result
+	// This subquery calculates the book count for a given user.
+	// GORM will correlate `books.owner_id` with `users.id` automatically.
+	subQuery := db.Model(&models.Book{}).Select("count(id)").Where("books.owner_id = users.id")
+
+	// The main query starts from the User model for better type safety.
+	err := db.Model(&models.User{}).
+		Select("users.id as user_id, users.first_name, users.last_name, (?) as book_count", subQuery).
+		Scan(&results).Error
+
+	if err != nil {
+		fmt.Printf("error fetching users book count: %v\n", err)
+		return
+	}
+
+	util.PrettyPrint(results, "GetUsersBookCount: method")
+
+}

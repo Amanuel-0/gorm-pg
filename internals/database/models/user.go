@@ -37,6 +37,11 @@ type User struct {
 	Role            Role       `json:"role,omitempty" gorm:"type:enum('user','admin','moderator','system');default:'user'"`
 	Local           string     `json:"local,omitempty" gorm:"default:'en'"`
 
+	// books_count -- instead of counting the books a user have
+	// we can store it in a variable that should be updated by
+	// Book table GORM hooks
+	BooksCount uint `json:"books_count,omitempty"` // -- currently I'm not using it
+
 	// timestamps
 	CreatedAt *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
@@ -47,4 +52,5 @@ type User struct {
 	UserProfile UserProfile `json:"user_profile,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	// user_preferred_genres which is a many to many relationship
 	PreferredGenres []*Genre `json:"preferred_genres,omitempty" gorm:"many2many:user_preferred_genres"`
+	Books           []Book   `json:"books,omitempty" gorm:"foreignKey:OwnerID"`
 }

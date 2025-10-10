@@ -58,3 +58,71 @@ type Book struct {
 	Genres []Genre     `json:"genres" gorm:"many2many:book_genres;"`
 	Images []BookImage `json:"images" gorm:"foreignKey:BookID;constraint:OnDelete:CASCADE"`
 }
+
+//
+//
+// I'm going to store the books_count in the User table.
+//
+//
+
+// // AfterCreate: increment owner's counter
+// func (b *Book) AfterCreate(tx *gorm.DB) (err error) {
+// 	if b.OwnerID == 0 {
+// 		return nil
+// 	}
+// 	return tx.Model(&User{}).
+// 		Where("id = ?", b.OwnerID).
+// 		UpdateColumn("books_count", gorm.Expr("books_count + ?", 1)).Error
+// }
+
+// // AfterDelete: decrement owner's counter
+// func (b *Book) AfterDelete(tx *gorm.DB) (err error) {
+// 	if b.OwnerID == 0 {
+// 		return nil
+// 	}
+// 	return tx.Model(&User{}).
+// 		Where("id = ?", b.OwnerID).
+// 		UpdateColumn("books_count", gorm.Expr("GREATEST(books_count - ?, 0)", 1)).Error
+// }
+
+// // BeforeUpdate: record previous owner id into the statement context
+// func (b *Book) BeforeUpdate(tx *gorm.DB) (err error) {
+// 	var old Book
+// 	if err := tx.Unscoped().Select("owner_id").Where("id = ?", b.ID).Take(&old).Error; err == nil {
+// 		tx.InstanceSet("old_owner_id", old.OwnerID)
+// 	}
+// 	return nil
+// }
+
+// // AfterUpdate: if owner changed, update both old and new owner's counters
+// func (b *Book) AfterUpdate(tx *gorm.DB) (err error) {
+// 	v, ok := tx.InstanceGet("old_owner_id")
+// 	if !ok {
+// 		return nil
+// 	}
+// 	oldOwnerID, _ := v.(uint)
+// 	newOwnerID := b.OwnerID
+
+// 	// If owner didn't change, nothing to do.
+// 	if oldOwnerID == newOwnerID {
+// 		return nil
+// 	}
+
+// 	// Decrement old owner
+// 	if oldOwnerID != 0 {
+// 		if err := tx.Model(&User{}).
+// 			Where("id = ?", oldOwnerID).
+// 			UpdateColumn("books_count", gorm.Expr("GREATEST(books_count - ?, 0)", 1)).Error; err != nil {
+// 			return err
+// 		}
+// 	}
+// 	// Increment new owner
+// 	if newOwnerID != 0 {
+// 		if err := tx.Model(&User{}).
+// 			Where("id = ?", newOwnerID).
+// 			UpdateColumn("books_count", gorm.Expr("books_count + ?", 1)).Error; err != nil {
+// 			return err
+// 		}
+// 	}
+// 	return nil
+// }

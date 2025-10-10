@@ -9,10 +9,10 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/level2"
 
 	// "github.com/Amanuel-0/gorm-pg/internals/queries/level1"
 
-	"github.com/Amanuel-0/gorm-pg/internals/queries/level2"
 	"github.com/Amanuel-0/gorm-pg/internals/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -72,7 +72,8 @@ func main() {
 	//
 	// level2.GetBookBetweenDates(db)
 	// level2.GetActiveSubsWithPlan(db)
-	level2.GetUsersWithExpiredSub(db)
+	// level2.GetUsersWithExpiredSub(db)
+	level2.GetUsersBookCount(db)
 
 	// playWithGORMqueries(db)
 

@@ -19,11 +19,11 @@ func CreateUserWithGenres(db *gorm.DB) {
 			LastName:  "Chelchesa",
 			Bio:       "I'm Chala Chelchesa.",
 		},
-		PreferredGenres: make([]models.Genre, len(genres)),
+		PreferredGenres: make([]*models.Genre, len(genres)),
 	}
 
 	for i, generId := range genres {
-		user.PreferredGenres[i] = models.Genre{ID: generId}
+		user.PreferredGenres[i] = &models.Genre{ID: generId}
 	}
 
 	// using Traditional API
