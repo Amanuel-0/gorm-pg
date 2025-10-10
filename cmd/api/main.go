@@ -42,6 +42,9 @@ func main() {
 	//
 
 	// Queries
+	//
+	// simple_tasks
+	//
 	// level1.CreateAuthor(db)
 	// level1.CreateBook(db)
 	// level1.GetBooksOfUser2(db)
@@ -50,7 +53,12 @@ func main() {
 	// level1.GetBookById(db)
 	// level1.GetAllUsersByPreferredGenre(db)
 	// level1.CreateSubsPlan(db)
-	level1.CreateUserWithGenres(db)
+
+	//
+	// intermediate
+	//
+	// level1.CreateUserWithGenres(db)
+	level1.GetLikeNewBooksOfAuthor(db)
 
 	// playWithGORMqueries(db)
 

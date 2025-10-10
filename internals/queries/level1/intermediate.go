@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Create a user and link them to multiple preferred genres.
 func CreateUserWithGenres(db *gorm.DB) {
 	var genres []uint = []uint{1, 2, 3}
 	user := models.User{
@@ -33,4 +34,34 @@ func CreateUserWithGenres(db *gorm.DB) {
 	// db.Model(&models.User{}).Association("PreferredGenres").Append(genres)
 
 	util.PrettyPrint(user, "CreateUserWithGenres: method ")
+}
+
+// Create a book and attach multiple `book_images`.
+func CreateBooksWithImages(db *gorm.DB) {
+	// similar question is with same kind of implementation exists
+}
+
+// Find all books with “like_new” condition by a specific author.
+func GetLikeNewBooksOfAuthor(db *gorm.DB) {
+	var authorId uint = 2
+	// check if that author exist
+	var author models.Author
+	if err := db.Where("id = ?", authorId).First(&author).Error; err != nil {
+		fmt.Printf("something wrong when finding author: %v", err)
+	}
+
+	var books []models.Book
+	if err := db.Model(&models.Book{}).
+		Where("author_id = ?", author.ID).
+		// Note: `condition` is a reserved keyword for sql, so it needs to be wrapped in a
+		// backtick to be used
+		Where("`condition` = ?", models.ConditionLikeNew). // "like_new"
+		Find(&books).Error; err != nil {
+		fmt.Printf("something wrong when finding author: %v", err)
+
+	}
+
+	util.PrettyPrint(books, "GetLikeNewBooksOfAuthor: method")
+	var count = len(books)
+	fmt.Println("count: ", count)
 }
