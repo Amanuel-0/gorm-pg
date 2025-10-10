@@ -65,3 +65,13 @@ func GetLikeNewBooksOfAuthor(db *gorm.DB) {
 	var count = len(books)
 	fmt.Println("count: ", count)
 }
+
+// List all books in a specific city or country.
+func GetBookByCityId(db *gorm.DB) {
+	var city string = "San Francisco"
+	var books []models.Book
+	if err := db.Model(&models.Book{}).Where("location_city = ?", city).Find(&books).Error; err != nil {
+		fmt.Printf("error finding books by city: %v", err)
+	}
+	util.PrettyPrint(books, "GetBookByCityId: method")
+}
