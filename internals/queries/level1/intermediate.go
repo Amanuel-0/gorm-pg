@@ -80,14 +80,29 @@ func GetBookByCityId(db *gorm.DB) {
 func GetGenresOfABook(db *gorm.DB) {
 	var bookId uint = 11
 	var genres []models.Genre
-	if err := db.Model(&models.Genre{}).
-		Select("genres.id", "genres.slug", "genres.name").
-		// loading the many-to-many rel
-		Joins("JOIN book_genres bg ON bg.genre_id = genres.id").
-		Joins("JOIN books b ON b.id = bg.book_id").
-		Where("b.id = ?", bookId).
-		Group("genres.id").Find(&genres).Error; err != nil {
-		fmt.Printf("error getting genres of a book: %v", err)
+
+	//
+	// Option 1
+	//
+	// if err := db.Model(&models.Genre{}).
+	// 	Select("genres.id", "genres.slug", "genres.name").
+	// 	// loading the many-to-many rel
+	// 	Joins("JOIN book_genres bg ON bg.genre_id = genres.id").
+	// 	Joins("JOIN books b ON b.id = bg.book_id").
+	// 	Where("b.id = ?", bookId).
+	// 	Group("genres.id").Find(&genres).Error; err != nil {
+	// 	fmt.Printf("error getting genres of a book: %v", err)
+	// }
+
+	//
+	// Option 2; this is the more idiomatic way of writing it in a sense that
+	// 			  it is more read able and GORMs' approach
+	//
+	bookWithId := models.Book{ID: bookId}
+	err := db.Model(&bookWithId).Association("Genres").Find(&genres)
+	if err != nil {
+		fmt.Printf("error getting genres of a book: %v\n", err)
+		return
 	}
 
 	util.PrettyPrint(genres, "GetGenresOfABook: method")
