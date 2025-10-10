@@ -37,7 +37,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [ ] Find all users who haven’t verified their email. (I don't think there is enough info to perform this, so passed.)
  - [x] Retrieve all active subscriptions and their plans.
  - [x] Find all users whose subscription is expired.
- - [ ] List all users who have ever made a successful payment.
+ - [ ] List all users who have ever made a successful payment. (I don't think there is enough ifno to perform this, so passed).
  - [ ] Count how many books each user owns.
  - [ ] Retrieve all books with their review averages.
  - [ ] List all exchanges in the “requested” state with book and user info.

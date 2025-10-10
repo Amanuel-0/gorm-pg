@@ -118,6 +118,6 @@ func GetUsersWithExpiredSub(db *gorm.DB) {
 	// util.PrettyPrint(users, "Expired Subscriptions:")
 }
 
-// Find all users whose subscription is expired.
-// func GetUsersWithExpiredSub(db *gorm.DB) {
-// }
+// List all users who have ever made a successful payment.
+// passed - no enough information, and it seems it is repetitive
+func GetUsersWithSuccessfulPayment(db *gorm.DB) {}
