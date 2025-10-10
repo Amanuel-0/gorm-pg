@@ -33,7 +33,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
 *Focus: filtering, joins, eager loading, query builders.*
 
- - [ ] Fetch all books available between two dates.
+ - [x] Fetch all books available between two dates.
  - [ ] Find all users who haven’t verified their email.
  - [ ] Retrieve all active subscriptions and their plans.
  - [ ] Find all users whose subscription is expired.
