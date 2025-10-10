@@ -25,7 +25,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [ ] Create a book and attach multiple `book_images`. (kind of same with other question)
  - [x] Find all books with “like_new” condition by a specific author.
  - [x] List all books in a specific city or country.
- - [ ] Get all genres associated with a given book (many-to-many).
+ - [x] Get all genres associated with a given book (many-to-many).
 
 ---
 

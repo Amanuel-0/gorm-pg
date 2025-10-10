@@ -14,4 +14,5 @@ type Genre struct {
 	CreatedAt *time.Time      `json:"created_at,omitempty"`
 	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
 	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
+	Books     []Book          `json:"books,omitempty" gorm:"many2many:book_genres;"`
 }

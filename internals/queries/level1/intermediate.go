@@ -75,3 +75,20 @@ func GetBookByCityId(db *gorm.DB) {
 	}
 	util.PrettyPrint(books, "GetBookByCityId: method")
 }
+
+// Get all genres associated with a given book (many-to-many).
+func GetGenresOfABook(db *gorm.DB) {
+	var bookId uint = 11
+	var genres []models.Genre
+	if err := db.Model(&models.Genre{}).
+		Select("genres.id", "genres.slug", "genres.name").
+		// loading the many-to-many rel
+		Joins("JOIN book_genres bg ON bg.genre_id = genres.id").
+		Joins("JOIN books b ON b.id = bg.book_id").
+		Where("b.id = ?", bookId).
+		Group("genres.id").Find(&genres).Error; err != nil {
+		fmt.Printf("error getting genres of a book: %v", err)
+	}
+
+	util.PrettyPrint(genres, "GetGenresOfABook: method")
+}

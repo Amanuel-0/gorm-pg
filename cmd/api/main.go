@@ -59,7 +59,8 @@ func main() {
 	//
 	// level1.CreateUserWithGenres(db)
 	// level1.GetLikeNewBooksOfAuthor(db)
-	level1.GetBookByCityId(db)
+	// level1.GetBookByCityId(db)
+	level1.GetGenresOfABook(db)
 
 	// playWithGORMqueries(db)
 
