@@ -59,3 +59,65 @@ func GetActiveSubsWithPlan(db *gorm.DB) {
 
 	util.PrettyPrint(subs, "GetActiveSubsWithPlan")
 }
+
+// Find all users whose subscription is expired.
+func GetUsersWithExpiredSub(db *gorm.DB) {
+	var users []models.User
+
+	//
+	// Option 1
+	//
+	subQuery := db.Table("subscriptions").
+		Select("user_id").
+		Where("current_period_end < ?", time.Now())
+
+	if err := db.Model(&models.User{}).
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "user_id", "bio")
+		}).
+		Where("id IN (?)", subQuery).
+		Select("id", "email", "phone", "first_name", "last_name").
+		Find(&users).Error; err != nil {
+		fmt.Printf("error fetching users with expired subscriptions: %v", err)
+	}
+
+	util.PrettyPrint(users, "Expired Subscriptions:")
+
+	//
+	// Option 2
+	//
+	// 	var users []models.User
+
+	// 	// Subquery: Get latest subscription per user
+	// 	latestSubQuery := db.Table("subscriptions AS s1").
+	// 		Select("s1.user_id, s1.current_period_end").
+	// 		Joins(`
+	//             LEFT JOIN subscriptions AS s2
+	//             ON s1.user_id = s2.user_id
+	//             AND s1.current_period_end < s2.current_period_end
+	//         `).
+	// 		Where("s2.user_id IS NULL") // ensures only the latest record per user
+
+	// 	if err := db.
+	// 		Table("users").
+	// 		Joins("JOIN (?) AS subs ON subs.user_id = users.id", latestSubQuery).
+	// 		// Expired if current_period_end < NOW() OR is NULL
+	// 		Where("(subs.current_period_end IS NULL OR subs.current_period_end < ?)", time.Now()).
+	// 		// Only normal user accounts
+	// 		Where("users.role = ?", "user").
+	// 		// Optional: Only active users
+	// 		Where("users.is_active = ?", true).
+	// 		// Select only identifiers (customize if needed)
+	// 		Select("users.id", "users.email", "users.first_name", "users.last_name").
+	// 		Find(&users).Error; err != nil {
+
+	// 		fmt.Printf("error fetching users with expired subscriptions: %v", err)
+	// 		return
+	// 	}
+
+	// util.PrettyPrint(users, "Expired Subscriptions:")
+}
+
+// Find all users whose subscription is expired.
+// func GetUsersWithExpiredSub(db *gorm.DB) {
+// }

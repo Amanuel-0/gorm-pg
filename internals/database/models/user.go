@@ -46,5 +46,5 @@ type User struct {
 	// UserProfile UserProfile `json:"user_profile" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	UserProfile UserProfile `json:"user_profile,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	// user_preferred_genres which is a many to many relationship
-	PreferredGenres []Genre `json:"preferred_genres" gorm:"many2many:user_preferred_genres"`
+	PreferredGenres []*Genre `json:"preferred_genres,omitempty" gorm:"many2many:user_preferred_genres"`
 }

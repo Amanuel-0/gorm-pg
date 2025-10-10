@@ -36,7 +36,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Fetch all books available between two dates.
  - [ ] Find all users who haven’t verified their email. (I don't think there is enough info to perform this, so passed.)
  - [x] Retrieve all active subscriptions and their plans.
- - [ ] Find all users whose subscription is expired.
+ - [x] Find all users whose subscription is expired.
  - [ ] List all users who have ever made a successful payment.
  - [ ] Count how many books each user owns.
  - [ ] Retrieve all books with their review averages.

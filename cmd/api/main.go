@@ -71,7 +71,8 @@ func main() {
 	// Level 2
 	//
 	// level2.GetBookBetweenDates(db)
-	level2.GetActiveSubsWithPlan(db)
+	// level2.GetActiveSubsWithPlan(db)
+	level2.GetUsersWithExpiredSub(db)
 
 	// playWithGORMqueries(db)
 
