@@ -21,7 +21,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
 ### ⚙️ Intermediate (1–N and N–M)
 
- - [ ] Create a user and link them to multiple preferred genres.
+ - [x] Create a user and link them to multiple preferred genres.
  - [ ] Create a book and attach multiple `book_images`.
  - [ ] Find all books with “like_new” condition by a specific author.
  - [ ] List all books in a specific city or country.

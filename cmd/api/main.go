@@ -9,7 +9,7 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/queries/simple_tasks"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/level1"
 	"github.com/Amanuel-0/gorm-pg/internals/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -42,14 +42,15 @@ func main() {
 	//
 
 	// Queries
-	// simple_tasks.CreateAuthor(db)
-	// simple_tasks.CreateBook(db)
-	// simple_tasks.GetBooksOfUser2(db)
-	// simple_tasks.GetBooksOfUserWithGenreStr(db)
-	// simple_tasks.GetBooksOfUserAwesome(db)
-	// simple_tasks.GetBookById(db)
-	// simple_tasks.GetAllUsersByPreferredGenre(db)
-	simple_tasks.CreateSubsPlan(db)
+	// level1.CreateAuthor(db)
+	// level1.CreateBook(db)
+	// level1.GetBooksOfUser2(db)
+	// level1.GetBooksOfUserWithGenreStr(db)
+	// level1.GetBooksOfUserAwesome(db)
+	// level1.GetBookById(db)
+	// level1.GetAllUsersByPreferredGenre(db)
+	// level1.CreateSubsPlan(db)
+	level1.CreateUserWithGenres(db)
 
 	// playWithGORMqueries(db)
 
