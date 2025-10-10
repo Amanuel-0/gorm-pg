@@ -16,7 +16,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Create a book with an author, owner and assign multiple genres.
  - [x] Retrieve all books owned by a specific user.
  - [x] Fetch a book including its author and genres.
- - [ ] List all users who prefer a certain genre.
+ - [x] List all users who prefer a certain genre.
  - [ ] Add a new subscription plan.
 
 ### ⚙️ Intermediate (1–N and N–M)

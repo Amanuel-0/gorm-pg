@@ -452,6 +452,9 @@ func GetBookById(db *gorm.DB) {
 		Preload("Genres", func(db *gorm.DB) *gorm.DB {
 			return db.Select("id", "name", "slug")
 		}).
+		Preload("Owner.PreferredGenres", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "user_id")
+		}).
 		Where("id = ?", bookId).
 		First(&book).Error; err != nil {
 
@@ -461,4 +464,32 @@ func GetBookById(db *gorm.DB) {
 	}
 
 	util.PrettyPrint(book, "GetBookById: method")
+}
+
+//
+
+// List all users who prefer a certain genre.
+func GetAllUsersByPreferredGenre(db *gorm.DB) {
+	// a slice of genre or a single genre
+	var fltGenres []uint = []uint{1, 2, 3, 4}
+	var users []models.User
+
+	if err := db.Model(&models.User{}).
+		Select("id", "email", "phone", "first_name", "last_name").
+		Joins("JOIN user_preferred_genres pg ON pg.user_id = id").
+		Group("id").
+		Where("pg.genre_id IN ?", fltGenres).
+		Preload("PreferredGenres", func(db *gorm.DB) *gorm.DB {
+			return db.
+				Select("id", "name", "slug")
+		}).
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "display_name", "bio", "user_id")
+		}).
+		Find(&users).Error; err != nil {
+		fmt.Printf("error fetching users by there genres: %v", err)
+	}
+
+	util.PrettyPrint(users, "GetAllUsersByPreferredGenre/s")
+
 }
