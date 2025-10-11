@@ -41,7 +41,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Count how many books each user owns.
  - [x] Retrieve all books with their review averages.
  - [x] List all exchanges in the “requested” state with book and user info.
- - [ ] Fetch messages in a chat thread, sorted newest → oldest.
+ - [x] Fetch messages in a chat thread, sorted newest → oldest.
  - [ ] Find all users who haven’t logged in for 30+ days.
 
 ---

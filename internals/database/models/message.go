@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -24,15 +26,21 @@ func (mt MessageType) IsValid() bool {
 }
 
 type Message struct {
-	gorm.Model
-	ThreadID    uint        `json:"thread_id" gorm:"index"`
-	SenderID    uint        `json:"sender_id" gorm:"index"`
-	Type        MessageType `json:"type" gorm:"type:enum('text','image','file','system')"`
-	Body        string      `json:"body" gorm:"type:text"`
-	Attachments string      `json:"attachments" gorm:"type:json"` // JSON array of attachment URLs
-	Deleted     bool        `json:"deleted" gorm:"default:false"`
+	// gorm.Model
+	ID          uint        `json:"id,omitempty" gorm:"primaryKey"`
+	ThreadID    uint        `json:"thread_id,omitempty" gorm:"index"`
+	SenderID    uint        `json:"sender_id,omitempty" gorm:"index"`
+	Type        MessageType `json:"type,omitempty" gorm:"type:enum('text','image','file','system')"`
+	Body        string      `json:"body,omitempty" gorm:"type:text"`
+	Attachments string      `json:"attachments,omitempty" gorm:"type:json"` // JSON array of attachment URLs
+	Deleted     bool        `json:"deleted,omitempty" gorm:"default:false"`
+
+	// timestamps
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// relationships
-	Thread ChatThread `json:"thread" gorm:"foreignKey:ThreadID"`
-	Sender User       `json:"sender" gorm:"foreignKey:SenderID"`
+	Thread *ChatThread `json:"thread,omitempty" gorm:"foreignKey:ThreadID"`
+	Sender *User       `json:"sender,omitempty" gorm:"foreignKey:SenderID"`
 }

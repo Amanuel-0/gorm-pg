@@ -31,27 +31,27 @@ func (s Status) IsValid() bool {
 
 type Exchange struct {
 	// gorm.Model
-	ID                     uint      `json:"id,omitempty" gorm:"primaryKey"`
-	RequesterID            uint      `json:"requester_id,omitempty" gorm:"not null"`
-	ResponderID            *uint     `json:"responder_id,omitempty"`
-	RequesterBookID        *uint     `json:"requester_book_id,omitempty"`
-	ResponderBookID        *uint     `json:"responder_book_id,omitempty"`
-	Status                 string    `json:"status,omitempty" gorm:"type:enum('requested','accepted','declined','shipped','in_transit','delivered','completed','canceled','disputed','archived');not null;default:'requested'"`
-	RequestedAt            time.Time `json:"requested_at,omitempty" gorm:"not null;default:CURRENT_TIMESTAMP"`
-	StatusUpdatedAt        time.Time `json:"status_updated_at,omitempty" gorm:"not null;default:CURRENT_TIMESTAMP;autoUpdateTime"`
-	AgreedStartDate        time.Time `json:"agreed_start_date,omitempty"`
-	AgreedEndDate          time.Time `json:"agreed_end_date,omitempty"`
-	ShippingRequired       bool      `json:"shipping_required,omitempty" gorm:"default:true"`
-	ShippingProvider       string    `json:"shipping_provider,omitempty"`
-	ShippingTrackingNumber string    `json:"shipping_tracking_number,omitempty"`
-	ShippingCostCents      int       `json:"shipping_cost_cents,omitempty"`
-	ShippingPayerUserID    uint      `json:"shipping_payer_user_id,omitempty"`
-	CompletedAt            time.Time `json:"completed_at,omitempty"`
-	CanceledAt             time.Time `json:"canceled_at,omitempty"`
-	DisputeReason          string    `json:"dispute_reason,omitempty" gorm:"type:text"`
-	DisputeOpenedAt        time.Time `json:"dispute_opened_at,omitempty"`
-	Archived               bool      `json:"archived,omitempty" gorm:"default:false"`
-	Metadata               *string   `json:"metadata,omitempty" gorm:"type:json"`
+	ID                     uint       `json:"id,omitempty" gorm:"primaryKey"`
+	RequesterID            uint       `json:"requester_id,omitempty" gorm:"not null"`
+	ResponderID            *uint      `json:"responder_id,omitempty"`
+	RequesterBookID        *uint      `json:"requester_book_id,omitempty"`
+	ResponderBookID        *uint      `json:"responder_book_id,omitempty"`
+	Status                 string     `json:"status,omitempty" gorm:"type:enum('requested','accepted','declined','shipped','in_transit','delivered','completed','canceled','disputed','archived');not null;default:'requested'"`
+	RequestedAt            *time.Time `json:"requested_at,omitempty" gorm:"not null;default:CURRENT_TIMESTAMP"`
+	StatusUpdatedAt        *time.Time `json:"status_updated_at,omitempty" gorm:"not null;default:CURRENT_TIMESTAMP;autoUpdateTime"`
+	AgreedStartDate        *time.Time `json:"agreed_start_date,omitempty"`
+	AgreedEndDate          *time.Time `json:"agreed_end_date,omitempty"`
+	ShippingRequired       bool       `json:"shipping_required,omitempty" gorm:"default:true"`
+	ShippingProvider       string     `json:"shipping_provider,omitempty"`
+	ShippingTrackingNumber string     `json:"shipping_tracking_number,omitempty"`
+	ShippingCostCents      int        `json:"shipping_cost_cents,omitempty"`
+	ShippingPayerUserID    uint       `json:"shipping_payer_user_id,omitempty"`
+	CompletedAt            *time.Time `json:"completed_at,omitempty"`
+	CanceledAt             *time.Time `json:"canceled_at,omitempty"`
+	DisputeReason          string     `json:"dispute_reason,omitempty" gorm:"type:text"`
+	DisputeOpenedAt        *time.Time `json:"dispute_opened_at,omitempty"`
+	Archived               bool       `json:"archived,omitempty" gorm:"default:false"`
+	Metadata               *string    `json:"metadata,omitempty" gorm:"type:json"`
 
 	// timestamps
 	CreatedAt *time.Time      `json:"created_at,omitempty"`

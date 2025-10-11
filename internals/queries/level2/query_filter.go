@@ -200,3 +200,34 @@ func GetExchangesWithRequestedStatus(db *gorm.DB) {
 
 	util.PrettyPrint(exchanges, "GetExchangesWithRequestedStatus: method")
 }
+
+// Fetch messages in a chat thread, sorted newest → oldest.
+func GetThreadMessagesSorted(db *gorm.DB) {
+	// chat thread and messages have a one-to-many relationship
+	var threadId uint = 2
+	var messages []models.Message
+	err := db.Model(&models.Message{}).
+		Where("thread_id = ?", threadId).
+		Preload("Thread", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "exchange_id")
+		}).
+		// Preload("Thread.Exchange").
+		Preload("Thread.Exchange", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "requester_id", "responder_id")
+		}).
+		Preload("Thread.Exchange.Requester", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "first_name", "last_name")
+		}).
+		Preload("Thread.Exchange.Responder", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "first_name", "last_name")
+		}).
+		Select("id", "thread_id", "sender_id", "type", "body", "attachments", "created_at", "updated_at").
+		Order("created_at DESC").
+		Find(&messages).Error
+
+	if err != nil {
+		fmt.Printf("error fetching thread messages: %v", err)
+	}
+
+	util.PrettyPrint(messages, "GetThreadMessagesSorted: method")
+}
