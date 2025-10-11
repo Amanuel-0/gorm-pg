@@ -74,7 +74,8 @@ func main() {
 	// level2.GetActiveSubsWithPlan(db)
 	// level2.GetUsersWithExpiredSub(db)
 	// level2.GetUsersWithBookCount(db)
-	level2.GetBooksWithAvgReview(db)
+	// level2.GetBooksWithAvgReview(db)
+	level2.GetExchangesWithRequestedStatus(db)
 
 	// playWithGORMqueries(db)
 

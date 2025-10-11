@@ -172,3 +172,31 @@ func GetBooksWithAvgReview(db *gorm.DB) {
 
 	util.PrettyPrint(results, "GetUsersBookCount: method")
 }
+
+// List all exchanges in the “requested” state with book and user info.
+func GetExchangesWithRequestedStatus(db *gorm.DB) {
+	var exchanges []models.Exchange
+
+	err := db.Model(&models.Exchange{}).
+		Preload("Requester", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "phone")
+		}).
+		Preload("Requester.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio")
+		}).
+		Preload("Responder", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "phone")
+		}).
+		Preload("Responder.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio")
+		}).
+		Where("status = ?", models.ExchangeStatusRequested).
+		// Select("").
+		Find(&exchanges).Error
+
+	if err != nil {
+		fmt.Printf("error fetching exchanges with requested status: %v", err)
+	}
+
+	util.PrettyPrint(exchanges, "GetExchangesWithRequestedStatus: method")
+}

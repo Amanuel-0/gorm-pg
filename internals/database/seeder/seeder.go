@@ -475,24 +475,24 @@ func seedExchanges(db *gorm.DB, ctx context.Context, users []models.User, books 
 	now := time.Now()
 	exchanges := []models.Exchange{
 		// Requested exchanges
-		{RequesterID: users[0].ID, ResponderID: &users[1].ID, RequesterBookID: &books[0].ID, ResponderBookID: &books[1].ID, ShippingPayerUserID: users[0].ID, Status: string(models.StatusRequested), RequestedAt: now.AddDate(0, 0, -5), StatusUpdatedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
-		{RequesterID: users[2].ID, ResponderID: &users[3].ID, RequesterBookID: &books[2].ID, ResponderBookID: &books[5].ID, ShippingPayerUserID: users[2].ID, Status: string(models.StatusRequested), RequestedAt: now.AddDate(0, 0, -3), StatusUpdatedAt: now.AddDate(0, 0, -3), Metadata: "{}"},
+		{RequesterID: users[0].ID, ResponderID: &users[1].ID, RequesterBookID: &books[0].ID, ResponderBookID: &books[1].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: now.AddDate(0, 0, -5), StatusUpdatedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
+		{RequesterID: users[2].ID, ResponderID: &users[3].ID, RequesterBookID: &books[2].ID, ResponderBookID: &books[5].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: now.AddDate(0, 0, -3), StatusUpdatedAt: now.AddDate(0, 0, -3), Metadata: "{}"},
 
 		// Accepted exchanges
-		{RequesterID: users[1].ID, ResponderID: &users[4].ID, RequesterBookID: &books[3].ID, ResponderBookID: &books[6].ID, ShippingPayerUserID: users[1].ID, Status: string(models.StatusAccepted), RequestedAt: now.AddDate(0, 0, -10), StatusUpdatedAt: now.AddDate(0, 0, -8), AgreedStartDate: now.AddDate(0, 0, -8), AgreedEndDate: now.AddDate(0, 0, 7), Metadata: "{}"},
+		{RequesterID: users[1].ID, ResponderID: &users[4].ID, RequesterBookID: &books[3].ID, ResponderBookID: &books[6].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusAccepted), RequestedAt: now.AddDate(0, 0, -10), StatusUpdatedAt: now.AddDate(0, 0, -8), AgreedStartDate: now.AddDate(0, 0, -8), AgreedEndDate: now.AddDate(0, 0, 7), Metadata: "{}"},
 
 		// Shipped exchanges
-		{RequesterID: users[0].ID, ResponderID: &users[2].ID, RequesterBookID: &books[7].ID, ResponderBookID: &books[8].ID, ShippingPayerUserID: users[0].ID, Status: string(models.StatusShipped), RequestedAt: now.AddDate(0, 0, -15), StatusUpdatedAt: now.AddDate(0, 0, -2), AgreedStartDate: now.AddDate(0, 0, -12), AgreedEndDate: now.AddDate(0, 0, 3), ShippingProvider: "UPS", ShippingTrackingNumber: "1Z999AA1234567890", ShippingCostCents: 1299, Metadata: "{}"},
+		{RequesterID: users[0].ID, ResponderID: &users[2].ID, RequesterBookID: &books[7].ID, ResponderBookID: &books[8].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusShipped), RequestedAt: now.AddDate(0, 0, -15), StatusUpdatedAt: now.AddDate(0, 0, -2), AgreedStartDate: now.AddDate(0, 0, -12), AgreedEndDate: now.AddDate(0, 0, 3), ShippingProvider: "UPS", ShippingTrackingNumber: "1Z999AA1234567890", ShippingCostCents: 1299, Metadata: "{}"},
 
 		// Completed exchanges
-		{RequesterID: users[3].ID, ResponderID: &users[1].ID, RequesterBookID: &books[9].ID, ResponderBookID: &books[10].ID, ShippingPayerUserID: users[3].ID, Status: string(models.StatusCompleted), RequestedAt: now.AddDate(0, 0, -30), StatusUpdatedAt: now.AddDate(0, 0, -5), AgreedStartDate: now.AddDate(0, 0, -25), AgreedEndDate: now.AddDate(0, 0, -5), CompletedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
-		{RequesterID: users[4].ID, ResponderID: &users[0].ID, RequesterBookID: &books[11].ID, ResponderBookID: &books[12].ID, ShippingPayerUserID: users[4].ID, Status: string(models.StatusCompleted), RequestedAt: now.AddDate(0, 0, -45), StatusUpdatedAt: now.AddDate(0, 0, -20), AgreedStartDate: now.AddDate(0, 0, -40), AgreedEndDate: now.AddDate(0, 0, -20), CompletedAt: now.AddDate(0, 0, -20), Metadata: "{}"},
+		{RequesterID: users[3].ID, ResponderID: &users[1].ID, RequesterBookID: &books[9].ID, ResponderBookID: &books[10].ID, ShippingPayerUserID: users[3].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: now.AddDate(0, 0, -30), StatusUpdatedAt: now.AddDate(0, 0, -5), AgreedStartDate: now.AddDate(0, 0, -25), AgreedEndDate: now.AddDate(0, 0, -5), CompletedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
+		{RequesterID: users[4].ID, ResponderID: &users[0].ID, RequesterBookID: &books[11].ID, ResponderBookID: &books[12].ID, ShippingPayerUserID: users[4].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: now.AddDate(0, 0, -45), StatusUpdatedAt: now.AddDate(0, 0, -20), AgreedStartDate: now.AddDate(0, 0, -40), AgreedEndDate: now.AddDate(0, 0, -20), CompletedAt: now.AddDate(0, 0, -20), Metadata: "{}"},
 
 		// Canceled exchanges
-		{RequesterID: users[2].ID, ResponderID: &users[4].ID, RequesterBookID: &books[13].ID, ResponderBookID: &books[14].ID, ShippingPayerUserID: users[2].ID, Status: string(models.StatusCanceled), RequestedAt: now.AddDate(0, 0, -20), StatusUpdatedAt: now.AddDate(0, 0, -15), CanceledAt: now.AddDate(0, 0, -15), Metadata: "{}"},
+		{RequesterID: users[2].ID, ResponderID: &users[4].ID, RequesterBookID: &books[13].ID, ResponderBookID: &books[14].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusCancelled), RequestedAt: now.AddDate(0, 0, -20), StatusUpdatedAt: now.AddDate(0, 0, -15), CanceledAt: now.AddDate(0, 0, -15), Metadata: "{}"},
 
 		// Disputed exchanges
-		{RequesterID: users[1].ID, ResponderID: &users[3].ID, RequesterBookID: &books[1].ID, ResponderBookID: &books[2].ID, ShippingPayerUserID: users[1].ID, Status: string(models.StatusDisputed), RequestedAt: now.AddDate(0, 0, -25), StatusUpdatedAt: now.AddDate(0, 0, -10), AgreedStartDate: now.AddDate(0, 0, -20), AgreedEndDate: now.AddDate(0, 0, -10), DisputeReason: "Book condition not as described", DisputeOpenedAt: now.AddDate(0, 0, -10), Metadata: "{}"},
+		{RequesterID: users[1].ID, ResponderID: &users[3].ID, RequesterBookID: &books[1].ID, ResponderBookID: &books[2].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusInDispute), RequestedAt: now.AddDate(0, 0, -25), StatusUpdatedAt: now.AddDate(0, 0, -10), AgreedStartDate: now.AddDate(0, 0, -20), AgreedEndDate: now.AddDate(0, 0, -10), DisputeReason: "Book condition not as described", DisputeOpenedAt: now.AddDate(0, 0, -10), Metadata: "{}"},
 	}
 
 	for i := range exchanges {
