@@ -231,3 +231,28 @@ func GetThreadMessagesSorted(db *gorm.DB) {
 
 	util.PrettyPrint(messages, "GetThreadMessagesSorted: method")
 }
+
+// Find all users who haven’t logged in for 30+ days.
+func GetUsersInActiveForOverAMonth(db *gorm.DB) {
+	var userIDs []uint
+	db.Model(&models.ActivityLog{}).
+		Where("action = ?", models.LogActionLogin).
+		Where("created_at >= ?", time.Now().AddDate(0, 0, -30)).
+		Pluck("user_id", &userIDs)
+
+	fmt.Print("user ids: ", userIDs)
+
+	var inactiveUsers []models.User
+	if err := db.Model(&models.User{}).
+		Where("id NOT IN ?", userIDs).
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio", "display_name")
+		}).
+		Select("id", "email", "first_name", "last_name").
+		Find(&inactiveUsers).Error; err != nil {
+		fmt.Printf("error fetching inactive users: %v\n", err)
+	}
+
+	util.PrettyPrint(inactiveUsers, "GetUsersInActiveForOverAMonth: method")
+
+}
