@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
+	"github.com/Amanuel-0/gorm-pg/internals/util"
 	"gorm.io/datatypes"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -108,6 +109,72 @@ func SoftDelBook(db *gorm.DB) {
 
 		return nil
 	})
+}
+
+// - [ ] Create a transaction that handles an exchange:
+//   - [ ] Mark exchange as `completed`.
+//   - [ ] Update both books as unavailable.
+//   - [ ] Insert two user ratings.
+func CompleteExchange(db *gorm.DB) {
+	const id uint = 3 // previously in 'accepted' state
+
+	db.Transaction(func(db *gorm.DB) error {
+		var ex models.Exchange
+
+		if err := db.Model(&models.Exchange{}).
+			Preload("RequesterBook").
+			Preload("ResponderBook").
+			First(&ex, "id = ?", id).Error; err != nil {
+			return err
+		}
+
+		ex.Status = string(models.ExchangeStatusCompleted)
+
+		db.Save(&ex)
+
+		// make the books unavailable date set to nil & update the status
+		var rqBookId = ex.RequesterBookID
+		var rsBookId = ex.ResponderBookID
+		// Update both books as unavailable
+		if err := db.Model(&models.Book{}).
+			Where("id IN ?", []uint{*rqBookId, *rsBookId}).
+			Updates(models.Book{
+				AvailableFrom:  nil,
+				AvailableUntil: nil,
+				Active:         true,
+			}).Error; err != nil {
+			return err
+		}
+
+		// create 2 user rating
+		// requester rating
+		var rqRating = models.UserRating{
+			ExchangeID:  ex.ID,
+			RaterID:     ex.RequesterID,
+			RatedUserID: *ex.ResponderID,
+			Rating:      4,
+			Comment:     "I had a great experience with this person. The book was great reading, and it was in a great condition.",
+		}
+		// responder rating
+		var rsRating = models.UserRating{
+			ExchangeID:  ex.ID,
+			RaterID:     *ex.ResponderID,
+			RatedUserID: ex.RequesterID,
+			Rating:      5,
+			Comment:     "I had a great experience with this person. The book was great reading, and it was in a great condition.",
+		}
+
+		// create user rating in batch
+		var ratings = []models.UserRating{rqRating, rsRating}
+		if err := db.Create(&ratings).Error; err != nil {
+			return err
+		}
+
+		util.PrettyPrint(ex, "CompleteExchange: method")
+
+		return nil
+	})
+
 }
 
 /*

@@ -57,10 +57,10 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] On book deletion:
    - [x] Soft delete the book (`archived_at`).
    - [x] Cascade delete its images and related `book_genres`. (i.e. cascade works if it is not gorm.DeletedAt(this by default gives a soft delete))
- - [ ] Create a transaction that handles an exchange:
-   - [ ] Mark exchange as `completed`.
-   - [ ] Update both books as unavailable.
-   - [ ] Insert two user ratings.
+ - [x] Create a transaction that handles an exchange:
+   - [x] Mark exchange as `completed`.
+   - [x] Update both books as unavailable.
+   - [x] Insert two user ratings.
  - [ ] Create a function to cancel a subscription:
    - [ ] Set `status = 'canceled'`.
    - [ ] Update `current_period_end` and `cancel_at_period_end`.
