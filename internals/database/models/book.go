@@ -48,8 +48,9 @@ type Book struct {
 	PreferredTitles *string    `json:"preferred_titles,omitempty" gorm:"type:json"`
 
 	// timestamps
-	CreatedAt *time.Time      `json:"created_at,omitempty"`
-	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// using `gorm.DeletedAt` makes it possible to soft delete a user
 	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships

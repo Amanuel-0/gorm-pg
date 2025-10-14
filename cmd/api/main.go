@@ -9,7 +9,6 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/database/seeder"
 	"github.com/Amanuel-0/gorm-pg/internals/queries/level3"
 
 	// "github.com/Amanuel-0/gorm-pg/internals/queries/level1"
@@ -39,9 +38,9 @@ func main() {
 	//
 	//
 	// Seed initial data (idempotent)
-	if err := seeder.SeedAll(db); err != nil {
-		log.Fatalf("failed to seed database: %v", err)
-	}
+	// if err := seeder.SeedAll(db); err != nil {
+	// 	log.Fatalf("failed to seed database: %v", err)
+	// }
 	//
 	//
 
@@ -83,7 +82,8 @@ func main() {
 	//
 	// Level 3
 	//
-	level3.CreateSubscription(db)
+	// level3.CreateSubscription(db)
+	level3.SoftDelBook(db)
 
 	// playWithGORMqueries(db)
 

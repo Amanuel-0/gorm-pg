@@ -54,9 +54,9 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
    - [x] Create a new `subscription` record.
    - [x] Create an initial `payment` record. --  (I don't think we have this)
    - [x] Update user’s role to `premium` (or store in metadata). -- (we don't have such kind of relation / but, an alternative is a subscription plan )
- - [ ] On book deletion:
-   - [ ] Soft delete the book (`archived_at`).
-   - [ ] Cascade delete its images and related `book_genres`.
+ - [x] On book deletion:
+   - [x] Soft delete the book (`archived_at`).
+   - [x] Cascade delete its images and related `book_genres`. (i.e. cascade works if it is not gorm.DeletedAt(this by default gives a soft delete))
  - [ ] Create a transaction that handles an exchange:
    - [ ] Mark exchange as `completed`.
    - [ ] Update both books as unavailable.

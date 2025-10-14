@@ -80,6 +80,41 @@ func CreateSubscription(db *gorm.DB) {
 
 }
 
+// - [ ] On book deletion:
+//   - [ ] Soft delete the book (`archived_at`).
+//   - [ ] Cascade delete its images and related `book_genres`.
+func SoftDelBook(db *gorm.DB) {
+	const id uint = 3
+
+	db.Transaction(func(tx *gorm.DB) error {
+		var book models.Book
+		if err := tx.
+			Preload("Genres").
+			Preload("Images").
+			Where("id = ?", id).
+			First(&book).Error; err != nil {
+			return err
+		}
+
+		// Clear many-to-many relationship manually
+		if err := tx.Model(&book).Association("Genres").Clear(); err != nil {
+			return err
+		}
+
+		// Delete Book (this will also delete Images because of OnDelete:CASCADE)
+		if err := tx.Unscoped().Delete(&book).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}
+
+/*
+//
+// helper functions
+//
+*/
 func getSubscriptionEndDate(subPlan models.SubscriptionPlan) time.Time {
 	var timeInDate time.Time
 	switch subPlan.Interval {
