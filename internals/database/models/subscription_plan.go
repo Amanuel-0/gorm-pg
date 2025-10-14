@@ -34,7 +34,7 @@ type SubscriptionPlan struct {
 	Description string         `json:"description,omitempty" gorm:"type:text"`
 	PriceCents  int            `json:"price_cents,omitempty" gorm:"not null"`
 	Currency    string         `json:"currency,omitempty" gorm:"size:8;not null;default:USD"`
-	Interval    string         `json:"interval,omitempty" gorm:"type:enum('month','year');not null"`
+	Interval    Interval       `json:"interval,omitempty" gorm:"type:enum('month','3_month','year');not null"`
 	Features    datatypes.JSON `json:"features,omitempty" gorm:"type:json"`
 	Active      bool           `json:"active,omitempty" gorm:"type:tinyint(1);not null;default:1"`
 

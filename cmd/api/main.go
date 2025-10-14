@@ -9,7 +9,8 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/queries/level2"
+	"github.com/Amanuel-0/gorm-pg/internals/database/seeder"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/level3"
 
 	// "github.com/Amanuel-0/gorm-pg/internals/queries/level1"
 
@@ -38,9 +39,9 @@ func main() {
 	//
 	//
 	// Seed initial data (idempotent)
-	// if err := seeder.SeedAll(db); err != nil {
-	// 	log.Fatalf("failed to seed database: %v", err)
-	// }
+	if err := seeder.SeedAll(db); err != nil {
+		log.Fatalf("failed to seed database: %v", err)
+	}
 	//
 	//
 
@@ -77,7 +78,12 @@ func main() {
 	// level2.GetBooksWithAvgReview(db)
 	// level2.GetExchangesWithRequestedStatus(db)
 	// level2.GetThreadMessagesSorted(db)
-	level2.GetUsersInActiveForOverAMonth(db)
+	// level2.GetUsersInActiveForOverAMonth(db)
+
+	//
+	// Level 3
+	//
+	level3.CreateSubscription(db)
 
 	// playWithGORMqueries(db)
 
@@ -112,6 +118,7 @@ func autoMigrateTables(db *gorm.DB) {
 		&models.UserProfile{},
 		&models.UserRating{},
 		&models.User{},
+		&models.Payment{},
 	); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)
 	}

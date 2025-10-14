@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
+	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -38,9 +39,14 @@ func SeedAll(db *gorm.DB) error {
 	}
 
 	// 5. SUBSCRIPTIONS - Multiple plans and various subscription statuses
-	_, err = seedSubscriptions(db, ctx, users)
+	subs, err := seedSubscriptions(db, ctx, users)
 	if err != nil {
 		return fmt.Errorf("failed to seed subscriptions: %w", err)
+	}
+
+	// 5b. PAYMENTS - Seed payments for subscriptions with varied statuses
+	if err := seedPayments(db, ctx, users, subs); err != nil {
+		return fmt.Errorf("failed to seed payments: %w", err)
 	}
 
 	// 6. COMMUNITIES - Multiple communities with different settings
@@ -395,14 +401,14 @@ func seedSubscriptions(db *gorm.DB, ctx context.Context, users []models.User) ([
 	// Create subscriptions with different statuses
 	now := time.Now()
 	subscriptions := []models.Subscription{
-		{UserID: uint64(users[0].ID), PlanID: &[]uint64{uint64(plans[1].ID)}[0], Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -15)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 15))},
-		{UserID: uint64(users[1].ID), PlanID: &[]uint64{uint64(plans[2].ID)}[0], Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -10)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 20))},
-		{UserID: uint64(users[2].ID), PlanID: &[]uint64{uint64(plans[0].ID)}[0], Status: models.SubscriptionStatusTrialing, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -5)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 25))},
-		{UserID: uint64(users[3].ID), PlanID: &[]uint64{uint64(plans[1].ID)}[0], Status: models.SubscriptionStatusPastDue, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -30)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -5))},
-		{UserID: uint64(users[4].ID), PlanID: &[]uint64{uint64(plans[2].ID)}[0], Status: models.SubscriptionStatusCanceled, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -60)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -30)), CancelAtPeriodEnd: true},
-		{UserID: uint64(users[5].ID), PlanID: &[]uint64{uint64(plans[3].ID)}[0], Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -20)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 10))},
-		{UserID: uint64(users[6].ID), PlanID: &[]uint64{uint64(plans[1].ID)}[0], Status: models.SubscriptionStatusExpired, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -90)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -60))},
-		{UserID: uint64(users[7].ID), PlanID: &[]uint64{uint64(plans[0].ID)}[0], Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -45)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 15))},
+		{UserID: users[0].ID, PlanID: plans[1].ID, Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -15)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 15))},
+		{UserID: users[1].ID, PlanID: plans[2].ID, Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -10)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 20))},
+		{UserID: users[2].ID, PlanID: plans[0].ID, Status: models.SubscriptionStatusTrialing, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -5)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 25))},
+		{UserID: users[3].ID, PlanID: plans[1].ID, Status: models.SubscriptionStatusPastDue, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -30)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -5))},
+		{UserID: users[4].ID, PlanID: plans[2].ID, Status: models.SubscriptionStatusCanceled, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -60)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -30)), CancelAtPeriodEnd: true},
+		{UserID: users[5].ID, PlanID: plans[3].ID, Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -20)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 10))},
+		{UserID: users[6].ID, PlanID: plans[1].ID, Status: models.SubscriptionStatusExpired, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -90)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, -60))},
+		{UserID: users[7].ID, PlanID: plans[0].ID, Status: models.SubscriptionStatusActive, CurrentPeriodStart: timePtr(now.AddDate(0, 0, -45)), CurrentPeriodEnd: timePtr(now.AddDate(0, 0, 15))},
 	}
 
 	for i := range subscriptions {
@@ -417,6 +423,48 @@ func seedSubscriptions(db *gorm.DB, ctx context.Context, users []models.User) ([
 // Helper function to create string pointers
 func stringPtr(s string) *string {
 	return &s
+}
+
+// seedPayments creates payments for subscriptions with varied statuses
+func seedPayments(db *gorm.DB, ctx context.Context, users []models.User, subs []models.Subscription) error {
+	now := time.Now()
+	// Build sample payments covering all statuses
+	payments := []models.Payment{}
+
+	// Helper to append safely
+	addPayment := func(userID, subID uint, amount float64, status models.PaymentStatus) {
+		payments = append(payments, models.Payment{
+			UserID:         userID,
+			SubscriptionID: subID,
+			AmountCents:    amount,
+			Status:         status,
+			Metadata:       datatypes.JSON([]byte(`{"provider":"stripe"}`)),
+			CreatedAt:      timePtr(now.AddDate(0, 0, -7)),
+		})
+	}
+
+	for i, s := range subs {
+		switch i % 5 {
+		case 0:
+			addPayment(s.UserID, s.ID, 999, models.PaymentStatusSucceeded)
+		case 1:
+			addPayment(s.UserID, s.ID, 1999, models.PaymentStatusPending)
+		case 2:
+			addPayment(s.UserID, s.ID, 0, models.PaymentStatusFailed)
+		case 3:
+			addPayment(s.UserID, s.ID, 4999, models.PaymentStatusRefunded)
+		default:
+			addPayment(s.UserID, s.ID, 1999, models.PaymentStatusCanceled)
+		}
+	}
+
+	for i := range payments {
+		if err := Upsert(db.WithContext(ctx), &payments[i], "user_id = ? AND subscription_id = ? AND status = ?", payments[i].UserID, payments[i].SubscriptionID, payments[i].Status); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // seedCommunities creates multiple communities with different settings
@@ -475,24 +523,24 @@ func seedExchanges(db *gorm.DB, ctx context.Context, users []models.User, books 
 	now := time.Now()
 	exchanges := []models.Exchange{
 		// Requested exchanges
-		{RequesterID: users[0].ID, ResponderID: &users[1].ID, RequesterBookID: &books[0].ID, ResponderBookID: &books[1].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: now.AddDate(0, 0, -5), StatusUpdatedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
-		{RequesterID: users[2].ID, ResponderID: &users[3].ID, RequesterBookID: &books[2].ID, ResponderBookID: &books[5].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: now.AddDate(0, 0, -3), StatusUpdatedAt: now.AddDate(0, 0, -3), Metadata: "{}"},
+		{RequesterID: users[0].ID, ResponderID: &users[1].ID, RequesterBookID: &books[0].ID, ResponderBookID: &books[1].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: timePtr(now.AddDate(0, 0, -5)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -5)), Metadata: stringPtr("{}")},
+		{RequesterID: users[2].ID, ResponderID: &users[3].ID, RequesterBookID: &books[2].ID, ResponderBookID: &books[5].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusRequested), RequestedAt: timePtr(now.AddDate(0, 0, -3)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -3)), Metadata: stringPtr("{}")},
 
 		// Accepted exchanges
-		{RequesterID: users[1].ID, ResponderID: &users[4].ID, RequesterBookID: &books[3].ID, ResponderBookID: &books[6].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusAccepted), RequestedAt: now.AddDate(0, 0, -10), StatusUpdatedAt: now.AddDate(0, 0, -8), AgreedStartDate: now.AddDate(0, 0, -8), AgreedEndDate: now.AddDate(0, 0, 7), Metadata: "{}"},
+		{RequesterID: users[1].ID, ResponderID: &users[4].ID, RequesterBookID: &books[3].ID, ResponderBookID: &books[6].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusAccepted), RequestedAt: timePtr(now.AddDate(0, 0, -10)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -8)), AgreedStartDate: timePtr(now.AddDate(0, 0, -8)), AgreedEndDate: timePtr(now.AddDate(0, 0, 7)), Metadata: stringPtr("{}")},
 
 		// Shipped exchanges
-		{RequesterID: users[0].ID, ResponderID: &users[2].ID, RequesterBookID: &books[7].ID, ResponderBookID: &books[8].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusShipped), RequestedAt: now.AddDate(0, 0, -15), StatusUpdatedAt: now.AddDate(0, 0, -2), AgreedStartDate: now.AddDate(0, 0, -12), AgreedEndDate: now.AddDate(0, 0, 3), ShippingProvider: "UPS", ShippingTrackingNumber: "1Z999AA1234567890", ShippingCostCents: 1299, Metadata: "{}"},
+		{RequesterID: users[0].ID, ResponderID: &users[2].ID, RequesterBookID: &books[7].ID, ResponderBookID: &books[8].ID, ShippingPayerUserID: users[0].ID, Status: string(models.ExchangeStatusShipped), RequestedAt: timePtr(now.AddDate(0, 0, -15)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -2)), AgreedStartDate: timePtr(now.AddDate(0, 0, -12)), AgreedEndDate: timePtr(now.AddDate(0, 0, 3)), ShippingProvider: "UPS", ShippingTrackingNumber: "1Z999AA1234567890", ShippingCostCents: 1299, Metadata: stringPtr("{}")},
 
 		// Completed exchanges
-		{RequesterID: users[3].ID, ResponderID: &users[1].ID, RequesterBookID: &books[9].ID, ResponderBookID: &books[10].ID, ShippingPayerUserID: users[3].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: now.AddDate(0, 0, -30), StatusUpdatedAt: now.AddDate(0, 0, -5), AgreedStartDate: now.AddDate(0, 0, -25), AgreedEndDate: now.AddDate(0, 0, -5), CompletedAt: now.AddDate(0, 0, -5), Metadata: "{}"},
-		{RequesterID: users[4].ID, ResponderID: &users[0].ID, RequesterBookID: &books[11].ID, ResponderBookID: &books[12].ID, ShippingPayerUserID: users[4].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: now.AddDate(0, 0, -45), StatusUpdatedAt: now.AddDate(0, 0, -20), AgreedStartDate: now.AddDate(0, 0, -40), AgreedEndDate: now.AddDate(0, 0, -20), CompletedAt: now.AddDate(0, 0, -20), Metadata: "{}"},
+		{RequesterID: users[3].ID, ResponderID: &users[1].ID, RequesterBookID: &books[9].ID, ResponderBookID: &books[10].ID, ShippingPayerUserID: users[3].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: timePtr(now.AddDate(0, 0, -30)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -5)), AgreedStartDate: timePtr(now.AddDate(0, 0, -25)), AgreedEndDate: timePtr(now.AddDate(0, 0, -5)), CompletedAt: timePtr(now.AddDate(0, 0, -5)), Metadata: stringPtr("{}")},
+		{RequesterID: users[4].ID, ResponderID: &users[0].ID, RequesterBookID: &books[11].ID, ResponderBookID: &books[12].ID, ShippingPayerUserID: users[4].ID, Status: string(models.ExchangeStatusCompleted), RequestedAt: timePtr(now.AddDate(0, 0, -45)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -20)), AgreedStartDate: timePtr(now.AddDate(0, 0, -40)), AgreedEndDate: timePtr(now.AddDate(0, 0, -20)), CompletedAt: timePtr(now.AddDate(0, 0, -20)), Metadata: stringPtr("{}")},
 
 		// Canceled exchanges
-		{RequesterID: users[2].ID, ResponderID: &users[4].ID, RequesterBookID: &books[13].ID, ResponderBookID: &books[14].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusCancelled), RequestedAt: now.AddDate(0, 0, -20), StatusUpdatedAt: now.AddDate(0, 0, -15), CanceledAt: now.AddDate(0, 0, -15), Metadata: "{}"},
+		{RequesterID: users[2].ID, ResponderID: &users[4].ID, RequesterBookID: &books[13].ID, ResponderBookID: &books[14].ID, ShippingPayerUserID: users[2].ID, Status: string(models.ExchangeStatusCancelled), RequestedAt: timePtr(now.AddDate(0, 0, -20)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -15)), CanceledAt: timePtr(now.AddDate(0, 0, -15)), Metadata: stringPtr("{}")},
 
 		// Disputed exchanges
-		{RequesterID: users[1].ID, ResponderID: &users[3].ID, RequesterBookID: &books[1].ID, ResponderBookID: &books[2].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusInDispute), RequestedAt: now.AddDate(0, 0, -25), StatusUpdatedAt: now.AddDate(0, 0, -10), AgreedStartDate: now.AddDate(0, 0, -20), AgreedEndDate: now.AddDate(0, 0, -10), DisputeReason: "Book condition not as described", DisputeOpenedAt: now.AddDate(0, 0, -10), Metadata: "{}"},
+		{RequesterID: users[1].ID, ResponderID: &users[3].ID, RequesterBookID: &books[1].ID, ResponderBookID: &books[2].ID, ShippingPayerUserID: users[1].ID, Status: string(models.ExchangeStatusInDispute), RequestedAt: timePtr(now.AddDate(0, 0, -25)), StatusUpdatedAt: timePtr(now.AddDate(0, 0, -10)), AgreedStartDate: timePtr(now.AddDate(0, 0, -20)), AgreedEndDate: timePtr(now.AddDate(0, 0, -10)), DisputeReason: "Book condition not as described", DisputeOpenedAt: timePtr(now.AddDate(0, 0, -10)), Metadata: stringPtr("{}")},
 	}
 
 	for i := range exchanges {
@@ -689,14 +737,14 @@ func seedModeration(db *gorm.DB, ctx context.Context, users []models.User) error
 // seedActivityLogs creates activity logs for audit trails
 func seedActivityLogs(db *gorm.DB, ctx context.Context, users []models.User, books []models.Book) error {
 	activityLogs := []models.ActivityLog{
-		{UserID: &users[0].ID, Action: models.ActionCreate, ObjectType: "book", ObjectID: &books[0].ID, Payload: `{"title":"1984"}`},
-		{UserID: &users[1].ID, Action: models.ActionUpdate, ObjectType: "user_profile", ObjectID: &users[1].ID, Payload: `{"bio":"Updated bio"}`},
-		{UserID: &users[2].ID, Action: models.ActionDelete, ObjectType: "book", ObjectID: &books[15].ID, Payload: `{"title":"Archived Book 1"}`},
-		{UserID: &users[3].ID, Action: models.ActionCreate, ObjectType: "exchange", ObjectID: &[]uint{1}[0], Payload: `{"exchange_id":1}`},
-		{UserID: &users[4].ID, Action: models.ActionUpdate, ObjectType: "subscription", ObjectID: &[]uint{1}[0], Payload: `{"status":"active"}`},
-		{UserID: &users[0].ID, Action: models.ActionCreate, ObjectType: "community", ObjectID: &[]uint{1}[0], Payload: `{"name":"Book Lovers"}`},
-		{UserID: &users[1].ID, Action: models.ActionUpdate, ObjectType: "book", ObjectID: &books[1].ID, Payload: `{"title":"Foundation"}`},
-		{UserID: &users[2].ID, Action: models.ActionDelete, ObjectType: "message", ObjectID: &[]uint{1}[0], Payload: `{"message_id":1}`},
+		{UserID: &users[0].ID, Action: models.LogActionCreate, ObjectType: "book", ObjectID: &books[0].ID, Payload: `{"title":"1984"}`},
+		{UserID: &users[1].ID, Action: models.LogActionUpdate, ObjectType: "user_profile", ObjectID: &users[1].ID, Payload: `{"bio":"Updated bio"}`},
+		{UserID: &users[2].ID, Action: models.LogActionDelete, ObjectType: "book", ObjectID: &books[15].ID, Payload: `{"title":"Archived Book 1"}`},
+		{UserID: &users[3].ID, Action: models.LogActionCreate, ObjectType: "exchange", ObjectID: &[]uint{1}[0], Payload: `{"exchange_id":1}`},
+		{UserID: &users[4].ID, Action: models.LogActionUpdate, ObjectType: "subscription", ObjectID: &[]uint{1}[0], Payload: `{"status":"active"}`},
+		{UserID: &users[0].ID, Action: models.LogActionCreate, ObjectType: "community", ObjectID: &[]uint{1}[0], Payload: `{"name":"Book Lovers"}`},
+		{UserID: &users[1].ID, Action: models.LogActionUpdate, ObjectType: "book", ObjectID: &books[1].ID, Payload: `{"title":"Foundation"}`},
+		{UserID: &users[2].ID, Action: models.LogActionDelete, ObjectType: "message", ObjectID: &[]uint{1}[0], Payload: `{"message_id":1}`},
 	}
 
 	for i := range activityLogs {

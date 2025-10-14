@@ -42,7 +42,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Retrieve all books with their review averages.
  - [x] List all exchanges in the “requested” state with book and user info.
  - [x] Fetch messages in a chat thread, sorted newest → oldest.
- - [ ] Find all users who haven’t logged in for 30+ days.
+ - [x] Find all users who haven’t logged in for 30+ days.
 
 ---
 
@@ -50,10 +50,10 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
 *Focus: multi-table operations, transactions, and complex updates.*
 
- - [ ] When a new user subscribes:
-   - [ ] Create a new `subscription` record.
-   - [ ] Create an initial `payment` record.
-   - [ ] Update user’s role to `premium` (or store in metadata).
+ - [x] When a new user subscribes:
+   - [x] Create a new `subscription` record.
+   - [x] Create an initial `payment` record. --  (I don't think we have this)
+   - [x] Update user’s role to `premium` (or store in metadata). -- (we don't have such kind of relation / but, an alternative is a subscription plan )
  - [ ] On book deletion:
    - [ ] Soft delete the book (`archived_at`).
    - [ ] Cascade delete its images and related `book_genres`.
