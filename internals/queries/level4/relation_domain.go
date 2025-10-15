@@ -107,3 +107,28 @@ func GetPaidCommunities(db *gorm.DB) {
 	}
 	util.PrettyPrint(communities, "GetPaidCommunities: method")
 }
+
+// Retrieve all exchanges involving a particular user (as requester or responder).
+func GetExchangesOfUser(db *gorm.DB) {
+	var userId uint = 1
+	var exchanges []models.Exchange
+	if err := db.Model(&models.Exchange{}).
+		Preload("Requester", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "phone", "first_name", "last_name", "role")
+		}).
+		Preload("Requester.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "user_id", "bio", "avatar_url")
+		}).
+		Preload("Responder", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "phone", "first_name", "last_name", "role")
+		}).
+		Preload("Responder.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "user_id", "bio", "avatar_url")
+		}).
+		Where("requester_id = ? OR responder_id = ?", userId, userId).
+		Find(&exchanges).Error; err != nil {
+		fmt.Printf("error fetching exchanges of a user: %v", err)
+	}
+
+	util.PrettyPrint(exchanges, "GetExchangesOfUser: method")
+}
