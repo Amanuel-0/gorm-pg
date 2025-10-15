@@ -81,7 +81,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Find communities that require paid chat (`require_paid_chat = 1`).
  - [ ] Get all notifications for a user, with type-specific payload parsing. (passed)
  - [x] Retrieve all exchanges involving a particular user (as requester or responder).
- - [ ] For a given user, list all books they offered in exchanges that are now `completed`.
+ - [x] For a given user, list all books they offered in exchanges that are now `completed`.
 
 ---
 

@@ -95,7 +95,8 @@ func main() {
 	// level4.GetCommunityThreads(db)
 	// level4.GetUsersWithWithAtLeast2Communities(db)
 	// level4.GetPaidCommunities(db)
-	level4.GetExchangesOfUser(db)
+	// level4.GetExchangesOfUser(db)
+	level4.GetBooksOfUserInCompletedExchanges(db)
 
 	// playWithGORMqueries(db)
 

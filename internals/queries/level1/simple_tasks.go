@@ -123,12 +123,12 @@ func CreateBook(db *gorm.DB) {
 		OwnerID:     userID,
 		AuthorID:    &author.ID,
 		Active:      false,
-		Genres:      make([]models.Genre, len(genres)),
+		Genres:      make([]*models.Genre, len(genres)),
 	}
 
 	for i, genreID := range genres {
 		// book.Genres[i] = models.Genre{Model: gorm.Model{ID: genreID}}
-		book.Genres[i] = models.Genre{ID: genreID}
+		book.Genres[i] = &models.Genre{ID: genreID}
 	}
 
 	// create the book

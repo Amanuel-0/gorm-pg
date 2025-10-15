@@ -132,3 +132,23 @@ func GetExchangesOfUser(db *gorm.DB) {
 
 	util.PrettyPrint(exchanges, "GetExchangesOfUser: method")
 }
+
+// For a given user, list all books they offered in exchanges that are now `completed`.
+func GetBooksOfUserInCompletedExchanges(db *gorm.DB) {
+	var userId uint = 1
+	var books []models.Book
+	if err := db.Model(&models.Book{}).
+		Preload("Owner", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "phone", "first_name", "last_name", "role")
+		}).
+		Preload("Owner.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "user_id", "bio", "avatar_url")
+		}).
+		Joins("JOIN exchanges e ON (e.requester_book_id = books.id OR e.responder_book_id = books.id)").
+		Where("e.status = ? AND books.owner_id = ?", models.ExchangeStatusCompleted, userId).
+		Find(&books).Error; err != nil {
+		fmt.Printf("error fetching books of a user in completed exchanges: %v", err)
+	}
+
+	util.PrettyPrint(books, "GetBooksOfUserInCompletedExchanges: method")
+}
