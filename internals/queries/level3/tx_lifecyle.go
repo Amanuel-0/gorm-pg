@@ -177,6 +177,25 @@ func CompleteExchange(db *gorm.DB) {
 
 }
 
+// - [ ] Create a function to cancel a subscription:
+//   - [ ] Set `status = 'canceled'`.
+//   - [ ] Update `current_period_end` and `cancel_at_period_end`.
+func CancelSubscription(db *gorm.DB) {
+	var subId uint = 2
+	var sub = models.Subscription{ID: subId}
+	if err := db.First(&sub).Error; err != nil {
+		fmt.Printf("couldn't found subscription with id: %v", sub.ID)
+	}
+	// update the sub
+	now := time.Now()
+	db.Model(&sub).Updates(models.Subscription{
+		Status:            models.SubscriptionStatusCanceled,
+		CurrentPeriodEnd:  &now,
+		CancelAtPeriodEnd: true,
+	})
+
+}
+
 /*
 //
 // helper functions

@@ -84,7 +84,8 @@ func main() {
 	//
 	// level3.CreateSubscription(db)
 	// level3.SoftDelBook(db)
-	level3.CompleteExchange(db)
+	// level3.CompleteExchange(db)
+	level3.CancelSubscription(db)
 
 	// playWithGORMqueries(db)
 

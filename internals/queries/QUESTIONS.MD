@@ -61,10 +61,10 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
    - [x] Mark exchange as `completed`.
    - [x] Update both books as unavailable.
    - [x] Insert two user ratings.
- - [ ] Create a function to cancel a subscription:
-   - [ ] Set `status = 'canceled'`.
-   - [ ] Update `current_period_end` and `cancel_at_period_end`.
-   - [ ] Log the change in `activity_logs`.
+ - [x] Create a function to cancel a subscription:
+   - [x] Set `status = 'canceled'`.
+   - [x] Update `current_period_end` and `cancel_at_period_end`.
+   - [ ] Log the change in `activity_logs`. -- (not necessary)
  - [ ] Create a function that reports a user:
    - [ ] Insert into `reports`.
    - [ ] Create a `notification` for the admin.
