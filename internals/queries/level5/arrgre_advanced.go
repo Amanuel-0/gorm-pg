@@ -58,3 +58,20 @@ func AuthorsWithMostBookListed(db *gorm.DB) {
 	util.PrettyPrint(authors, "AuthorsWithMostBookListed: method")
 	fmt.Println("author counts: ", res.RowsAffected)
 }
+
+// Calculate the average rating per user from `user_ratings`.
+func GetAvgUserRating(db *gorm.DB) {
+	type Result struct {
+		UserID    uint
+		AvgRating float64
+	}
+	var result []Result
+	res := db.Model(&models.UserRating{}).
+		Select("user_ratings.rated_user_id AS user_id, AVG(user_ratings.rating) AS avg_rating").
+		Group("user_ratings.rated_user_id").
+		Order("avg_rating DESC").
+		Scan(&result)
+
+	util.PrettyPrint(result, "GetAvgUserRating: method")
+	fmt.Println("count: ", res.RowsAffected)
+}

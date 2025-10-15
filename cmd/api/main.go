@@ -102,7 +102,8 @@ func main() {
 	// Level 5
 	//
 	// level5.GetTop5UsersByBooksOwned(db)
-	level5.AuthorsWithMostBookListed(db)
+	// level5.AuthorsWithMostBookListed(db)
+	level5.GetAvgUserRating(db)
 
 	// playWithGORMqueries(db)
 
