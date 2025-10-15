@@ -94,3 +94,16 @@ func GetUsersWithWithAtLeast2Communities(db *gorm.DB) {
 	util.PrettyPrint(users, "GetUsersWithWithAtLeast2Communities: method")
 	fmt.Println("user count: ", len(users))
 }
+
+// Find communities that require paid chat (`require_paid_chat = 1`).
+func GetPaidCommunities(db *gorm.DB) {
+	var communities []models.Community
+	if err := db.Model(&models.Community{}).
+		Preload("Creator").
+		Preload("Creator.UserProfile").
+		Where("require_paid_chat = ?", true).
+		Find(&communities).Error; err != nil {
+		fmt.Printf("error fetching paid communities: %v", err)
+	}
+	util.PrettyPrint(communities, "GetPaidCommunities: method")
+}
