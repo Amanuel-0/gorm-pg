@@ -76,7 +76,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 *Focus: joins, nested preloading, polymorphism patterns.*
 
  - [x] Get all chat threads for a given exchange, including messages and senders.
- - [ ] Fetch all community threads and their messages (with author info).
+ - [x] Fetch all community threads and their messages (with author info).
  - [ ] List all users who belong to at least 2 communities.
  - [ ] Find communities that require paid chat (`require_paid_chat = 1`).
  - [ ] Get all notifications for a user, with type-specific payload parsing.
