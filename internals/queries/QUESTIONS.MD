@@ -89,7 +89,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
 *Focus: group by, counts, averages, JSON, subqueries, CTEs.*
 
- - [ ] Find top 5 users by total number of books owned.
+ - [x] Find top 5 users by total number of books owned.
  - [ ] Find authors with the most books listed.
  - [ ] Calculate the average rating per user from `user_ratings`.
  - [ ] List books with more than 3 reviews and an average rating > 4.

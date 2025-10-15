@@ -9,7 +9,7 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/queries/level4"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/level5"
 
 	// "github.com/Amanuel-0/gorm-pg/internals/queries/level1"
 
@@ -96,7 +96,12 @@ func main() {
 	// level4.GetUsersWithWithAtLeast2Communities(db)
 	// level4.GetPaidCommunities(db)
 	// level4.GetExchangesOfUser(db)
-	level4.GetBooksOfUserInCompletedExchanges(db)
+	// level4.GetBooksOfUserInCompletedExchanges(db)
+
+	//
+	// Level 5
+	//
+	level5.GetTop5UsersByBooksOwned(db)
 
 	// playWithGORMqueries(db)
 
