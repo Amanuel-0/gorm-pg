@@ -9,7 +9,7 @@ import (
 	"github.com/Amanuel-0/gorm-pg/internals/config"
 	"github.com/Amanuel-0/gorm-pg/internals/database"
 	"github.com/Amanuel-0/gorm-pg/internals/database/models"
-	"github.com/Amanuel-0/gorm-pg/internals/queries/level3"
+	"github.com/Amanuel-0/gorm-pg/internals/queries/level4"
 
 	// "github.com/Amanuel-0/gorm-pg/internals/queries/level1"
 
@@ -86,7 +86,12 @@ func main() {
 	// level3.SoftDelBook(db)
 	// level3.CompleteExchange(db)
 	// level3.CancelSubscription(db)
-	level3.ReportUser(db)
+	// level3.ReportUser(db)
+
+	//
+	// Level 4
+	//
+	level4.GetChatThreadsOfExchange(db)
 
 	// playWithGORMqueries(db)
 
