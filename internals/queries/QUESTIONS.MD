@@ -77,7 +77,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
 
  - [x] Get all chat threads for a given exchange, including messages and senders.
  - [x] Fetch all community threads and their messages (with author info).
- - [ ] List all users who belong to at least 2 communities.
+ - [x] List all users who belong to at least 2 communities.
  - [ ] Find communities that require paid chat (`require_paid_chat = 1`).
  - [ ] Get all notifications for a user, with type-specific payload parsing.
  - [ ] Retrieve all exchanges involving a particular user (as requester or responder).

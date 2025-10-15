@@ -57,3 +57,40 @@ func GetCommunityThreads(db *gorm.DB) {
 
 	util.PrettyPrint(threads, "GetCommunityThreads: method")
 }
+
+// List all users who belong to at least 2 communities.
+func GetUsersWithWithAtLeast2Communities(db *gorm.DB) {
+	// 1. my first implementation
+	// var users []models.User
+	// var ids []uint
+	// if err := db.Model(&models.CommunityMember{}).
+	// 	Select("user_id", "count(user_id) as count").
+	// 	Group("user_id").
+	// 	Having("count(user_id) >= ?", 4).
+	// 	Pluck("user_id", &ids).Error; err != nil {
+	// 	fmt.Printf("error fetching user_id s: %v", err)
+	// }
+	// if err := db.Model(&models.User{}).
+	// 	Where("id IN (?)", ids).
+	// 	Find(&users).Error; err != nil {
+	// 	fmt.Printf("error fetching user: %v", err)
+	// }
+
+	// 2. better way of implementing it without having an intermediate value like
+	// `ids`
+	var users []models.User
+	if err := db.Model(&models.User{}).
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "display_name", "bio", "avatar_url")
+		}).
+		Select("users.*").
+		Joins("JOIN community_members cm ON cm.user_id = users.id").
+		Group("users.id").
+		Having("COUNT(cm.community_id) >= ?", 4).
+		Find(&users).Error; err != nil {
+		fmt.Printf("error fetching user: %v", err)
+	}
+
+	util.PrettyPrint(users, "GetUsersWithWithAtLeast2Communities: method")
+	fmt.Println("user count: ", len(users))
+}

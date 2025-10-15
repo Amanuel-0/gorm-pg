@@ -23,12 +23,18 @@ func (cr CommunityRole) IsValid() bool {
 }
 
 type CommunityMember struct {
-	gorm.Model
+	// gorm.Model
+	ID uint `json:"id" gorm:"primaryKey"`
 	// Composite unique index on CommunityID and UserID
 	CommunityID   uint          `json:"community_id" gorm:"uniqueIndex:idx_community_user;not null"`
 	UserID        uint          `json:"user_id" gorm:"uniqueIndex:idx_community_user;not null"`
 	CommunityRole CommunityRole `json:"community_role" gorm:"type:enum('member','admin','moderator');default:'member'"`
 	JoinedAt      time.Time     `json:"joined_at" gorm:"autoCreateTime"`
+
+	// timestamps
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships
 	Community *Community `json:"community,omitempty" gorm:"foreignKey:CommunityID"`

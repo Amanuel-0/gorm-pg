@@ -92,7 +92,8 @@ func main() {
 	// Level 4
 	//
 	// level4.GetChatThreadsOfExchange(db)
-	level4.GetCommunityThreads(db)
+	// level4.GetCommunityThreads(db)
+	level4.GetUsersWithWithAtLeast2Communities(db)
 
 	// playWithGORMqueries(db)
 
