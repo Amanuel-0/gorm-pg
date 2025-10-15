@@ -188,12 +188,55 @@ func CancelSubscription(db *gorm.DB) {
 	}
 	// update the sub
 	now := time.Now()
-	db.Model(&sub).Updates(models.Subscription{
+	if err := db.Model(&sub).Updates(models.Subscription{
 		Status:            models.SubscriptionStatusCanceled,
 		CurrentPeriodEnd:  &now,
 		CancelAtPeriodEnd: true,
-	})
+	}).Error; err != nil {
+		fmt.Printf("error updating subscription: %v", err)
+	}
+}
 
+// - [ ] Create a function that reports a user:
+//   - [ ] Insert into `reports`.
+//   - [ ] Create a `notification` for the admin.
+func ReportUser(db *gorm.DB) {
+	db.Transaction(func(tx *gorm.DB) error {
+
+		var adminUser models.User
+		if err := tx.Where("role = ?", "admin").First(&adminUser).Error; err != nil {
+			return err
+		}
+
+		var report = models.Report{
+			ReporterID: 4,
+			TargetType: "user",
+			TargetID:   5,
+			HandledBy:  adminUser.ID,
+			Reason:     "Inappropriate behavior",
+			Metadata:   `{"details": "User sent offensive messages."}`,
+		}
+
+		if err := tx.Create(&report).Error; err != nil {
+			return err
+		}
+
+		var notification = models.Notification{
+			UserID:  adminUser.ID,
+			Type:    models.NotificationTypeGeneralAnnouncement,
+			Payload: `{"message": "A new user report has been submitted."}`,
+			Read:    false,
+		}
+		if err := tx.Create(&notification).Error; err != nil {
+			return err
+		}
+
+		util.PrettyPrint(report, "ReportUser: method")
+		util.PrettyPrint(adminUser, "ReportUser: admin user")
+		util.PrettyPrint(notification, "ReportUser: notification")
+
+		return nil
+	})
 }
 
 /*

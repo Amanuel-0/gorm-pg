@@ -7,15 +7,21 @@ import (
 )
 
 type Report struct {
-	gorm.Model
-	ReporterID uint      `json:"reporter_id" gorm:"index"`
-	TargetType string    `json:"target_type" gorm:"size:50"`
-	TargetID   uint      `json:"target_id" gorm:"index"`
-	Reason     string    `json:"reason" gorm:"type:text"`
-	Metadata   string    `json:"metadata" gorm:"type:json"`
-	HandledBy  uint      `json:"handled_by" gorm:"index"`
-	HandledAt  time.Time `json:"handled_at" gorm:"autoUpdateTime"`
-	Resolution string    `json:"resolution" gorm:"type:text"`
+	// gorm.Model
+	ID         uint      `json:"id,omitempty" gorm:"primaryKey"`
+	ReporterID uint      `json:"reporter_id,omitempty" gorm:"index"`
+	TargetType string    `json:"target_type,omitempty" gorm:"size:50"`
+	TargetID   uint      `json:"target_id,omitempty" gorm:"index"`
+	Reason     string    `json:"reason,omitempty" gorm:"type:text"`
+	Metadata   string    `json:"metadata,omitempty" gorm:"type:json"`
+	HandledBy  uint      `json:"handled_by,omitempty" gorm:"index"`
+	HandledAt  time.Time `json:"handled_at,omitempty" gorm:"autoUpdateTime"`
+	Resolution string    `json:"resolution,omitempty" gorm:"type:text"`
+
+	// timestamps
+	CreatedAt *time.Time      `json:"created_at,omitempty"`
+	UpdatedAt *time.Time      `json:"updated_at,omitempty"`
+	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships
 	Reporter User `json:"reporter,omitempty" gorm:"foreignKey:ReporterID"`

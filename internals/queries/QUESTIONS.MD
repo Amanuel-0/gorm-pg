@@ -65,9 +65,9 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
    - [x] Set `status = 'canceled'`.
    - [x] Update `current_period_end` and `cancel_at_period_end`.
    - [ ] Log the change in `activity_logs`. -- (not necessary)
- - [ ] Create a function that reports a user:
-   - [ ] Insert into `reports`.
-   - [ ] Create a `notification` for the admin.
+ - [x] Create a function that reports a user:
+   - [x] Insert into `reports`.
+   - [x] Create a `notification` for the admin.
 
 ---
 
