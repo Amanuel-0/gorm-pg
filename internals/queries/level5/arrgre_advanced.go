@@ -34,3 +34,27 @@ func GetTop5UsersByBooksOwned(db *gorm.DB) {
 	util.PrettyPrint(users, "GetTop5UsersByBooksOwned: method")
 	fmt.Println("\nuser count: ", len(users))
 }
+
+// Find authors with the most books listed.
+func AuthorsWithMostBookListed(db *gorm.DB) {
+	type Result struct {
+		models.Author
+		TotalBooks uint `json:"total_books"`
+	}
+	var authors []Result
+	res := db.Model(&models.Author{}).
+		Joins("JOIN books b ON b.author_id = authors.id").
+		Where("b.active = ?", true).
+		Select("authors.id, authors.name, COUNT(b.id) AS total_books").
+		Group("authors.id").
+		Order("total_books DESC").
+		Limit(10).
+		Scan(&authors)
+
+	if err := res.Error; err != nil {
+		fmt.Printf("error getting authors with most listed books: %v", err)
+	}
+
+	util.PrettyPrint(authors, "AuthorsWithMostBookListed: method")
+	fmt.Println("author counts: ", res.RowsAffected)
+}
