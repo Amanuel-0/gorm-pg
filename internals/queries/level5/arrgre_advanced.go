@@ -127,3 +127,23 @@ func ListUsersMessageStatsByMonth(db *gorm.DB) {
 	util.PrettyPrint(results, "ListUsersMessageStatsByMonth: method")
 	fmt.Println("count: ", r.RowsAffected)
 }
+
+// Find users who have never participated in an exchange.
+func GetUsersWithNoExchangeHistory(db *gorm.DB) {
+	var users []models.User
+	r := db.Model(&models.User{}).
+		Joins("LEFT JOIN exchanges ex ON (ex.requester_id = users.id OR ex.responder_id = users.id)").
+		Group("users.id").
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio")
+		}).
+		Where("ex.id IS NULL").
+		Find(&users)
+
+	if err := r.Error; err != nil {
+		fmt.Printf("error fetching users with no exchange history: %v", err)
+	}
+
+	util.PrettyPrint(users, "GetUsersWithNoExchangeHistory: method")
+	fmt.Println("count: ", r.RowsAffected)
+}
