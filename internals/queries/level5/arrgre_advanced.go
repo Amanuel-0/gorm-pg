@@ -219,3 +219,42 @@ func GetUsersWithDisputedExchanges(db *gorm.DB) {
 	util.PrettyPrint(users, "GetUsersWithDisputedExchanges: method")
 	fmt.Println("\ncount: ", r.RowsAffected)
 }
+
+// Identify the most active communities (by number of messages).
+func GetActiveCommunities(db *gorm.DB) {
+	type Result struct {
+		// this annotation message has created issue with preloading nested relationships
+		// models.Community `gorm:"embedded"`
+		models.Community
+		TotalMessages uint `json:"total_messages"`
+	}
+	// var communities []models.Community
+	var communities []Result
+	r := db.Model(&models.Community{}).
+		Select("communities.*, COUNT(msgs.id) AS total_messages").
+		Joins("LEFT JOIN community_threads trds ON trds.community_id = communities.id").
+		Joins("LEFT JOIN community_messages msgs ON msgs.thread_id = trds.id").
+		Group("communities.id").
+		Order("total_messages DESC").
+		Preload("Creator", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "email", "first_name", "last_name")
+		}).
+		Preload("Creator.UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio")
+		}).
+		Preload("Threads", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "community_id", "title")
+		}).
+		Preload("Threads.Messages", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "thread_id", "body")
+		}).
+		Find(&communities)
+
+	if r.Error != nil {
+		fmt.Printf("error fetching active communities: %v", r.Error)
+	}
+
+	util.PrettyPrint(communities, "GetActiveCommunities: method")
+	fmt.Println("count: ", r.RowsAffected)
+
+}

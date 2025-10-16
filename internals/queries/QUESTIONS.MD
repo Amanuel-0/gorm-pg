@@ -98,7 +98,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Calculate total revenue per month from `payments`.
  - [x] List subscription plans ranked by active subscriber count.
  - [x] Find users who have disputed exchanges.
- - [ ] Identify the most active communities (by number of messages).
+ - [x] Identify the most active communities (by number of messages).
 
 ---
 
