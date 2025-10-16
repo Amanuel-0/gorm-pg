@@ -95,7 +95,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] List books with more than or equal to 2 reviews and an average rating > 4.
  - [x] Count the number of messages sent per user per month.
  - [x] Find users who have never participated in an exchange.
- - [ ] Calculate total revenue per month from `payments`.
+ - [x] Calculate total revenue per month from `payments`.
  - [ ] List subscription plans ranked by active subscriber count.
  - [ ] Find users who have disputed exchanges.
  - [ ] Identify the most active communities (by number of messages).

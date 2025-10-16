@@ -106,7 +106,8 @@ func main() {
 	// level5.GetAvgUserRating(db)
 	// level5.GetBooksWithCondReviewAndRaring(db)
 	// level5.ListUsersMessageStatsByMonth(db)
-	level5.GetUsersWithNoExchangeHistory(db)
+	// level5.GetUsersWithNoExchangeHistory(db)
+	level5.TotalRevenuePerMonth(db)
 
 	// playWithGORMqueries(db)
 

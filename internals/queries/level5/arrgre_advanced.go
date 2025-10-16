@@ -147,3 +147,24 @@ func GetUsersWithNoExchangeHistory(db *gorm.DB) {
 	util.PrettyPrint(users, "GetUsersWithNoExchangeHistory: method")
 	fmt.Println("count: ", r.RowsAffected)
 }
+
+// Calculate total revenue per month from `payments`.
+func TotalRevenuePerMonth(db *gorm.DB) {
+	type Result struct {
+		Year   uint `json:"year"`
+		Month  uint `json:"month"`
+		Amount uint `json:"amount"` // amount is in cents
+	}
+	var results []Result
+	r := db.Model(&models.Payment{}).
+		Select("payments.*, YEAR(created_at) AS year, MONTH(created_at) AS month, SUM(amount_cents) AS amount").
+		Group("year, month").
+		Scan(&results)
+
+	if r.Error != nil {
+		fmt.Printf("error fetching total revenue per month: %v", r.Error)
+	}
+
+	util.PrettyPrint(results, "TotalRevenuePerMonth: method")
+	fmt.Println("\ncount: ", r.RowsAffected)
+}
