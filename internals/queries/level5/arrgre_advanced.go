@@ -201,3 +201,21 @@ func SubscriptionPlansRankedByActiveSubCount(db *gorm.DB) {
 	fmt.Println("count: ", r.RowsAffected)
 
 }
+
+// Find users who have disputed exchanges.
+func GetUsersWithDisputedExchanges(db *gorm.DB) {
+	var users []models.User
+	r := db.Model(&models.User{}).
+		Joins("JOIN exchanges ex ON (ex.requester_id = users.id OR ex.responder_id = users.id) AND ex.status = ?", models.ExchangeStatusInDispute).
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio", "avatar_url")
+		}).
+		Find(&users)
+
+	if r.Error != nil {
+		fmt.Printf("error fetching users with disputed exchanges: %v", r.Error)
+	}
+
+	util.PrettyPrint(users, "GetUsersWithDisputedExchanges: method")
+	fmt.Println("\ncount: ", r.RowsAffected)
+}

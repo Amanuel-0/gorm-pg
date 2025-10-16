@@ -97,7 +97,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Find users who have never participated in an exchange.
  - [x] Calculate total revenue per month from `payments`.
  - [x] List subscription plans ranked by active subscriber count.
- - [ ] Find users who have disputed exchanges.
+ - [x] Find users who have disputed exchanges.
  - [ ] Identify the most active communities (by number of messages).
 
 ---

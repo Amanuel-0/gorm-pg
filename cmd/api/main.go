@@ -108,7 +108,8 @@ func main() {
 	// level5.ListUsersMessageStatsByMonth(db)
 	// level5.GetUsersWithNoExchangeHistory(db)
 	// level5.TotalRevenuePerMonth(db)
-	level5.SubscriptionPlansRankedByActiveSubCount(db)
+	// level5.SubscriptionPlansRankedByActiveSubCount(db)
+	level5.GetUsersWithDisputedExchanges(db)
 
 	// playWithGORMqueries(db)
 
