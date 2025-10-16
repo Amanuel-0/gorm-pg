@@ -20,6 +20,6 @@ type BookReview struct {
 	DeletedAt *gorm.DeletedAt `json:"deleted_at,omitempty"`
 
 	// Relationships
-	Book Book `json:"book,omitempty" gorm:"foreignKey:BookID;constraint:OnDelete:CASCADE"`
-	User User `json:"user,omitempty" gorm:"foreignKey:ReviewerID;constraint:OnDelete:CASCADE"`
+	Book *Book `json:"book,omitempty" gorm:"foreignKey:BookID;constraint:OnDelete:CASCADE"`
+	User *User `json:"user,omitempty" gorm:"foreignKey:ReviewerID;constraint:OnDelete:CASCADE"`
 }

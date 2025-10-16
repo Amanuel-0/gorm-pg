@@ -92,7 +92,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Find top 5 users by total number of books owned.
  - [x] Find authors with the most books listed.
  - [x] Calculate the average rating per user from `user_ratings`.
- - [ ] List books with more than 3 reviews and an average rating > 4.
+ - [x] List books with more than or equal to 2 reviews and an average rating > 4.
  - [ ] Count the number of messages sent per user per month.
  - [ ] Find users who have never participated in an exchange.
  - [ ] Calculate total revenue per month from `payments`.

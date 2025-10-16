@@ -62,8 +62,8 @@ func AuthorsWithMostBookListed(db *gorm.DB) {
 // Calculate the average rating per user from `user_ratings`.
 func GetAvgUserRating(db *gorm.DB) {
 	type Result struct {
-		UserID    uint
-		AvgRating float64
+		UserID    uint    `json:"user_id"`
+		AvgRating float64 `json:"avg_rating"`
 	}
 	var result []Result
 	res := db.Model(&models.UserRating{}).
@@ -74,4 +74,29 @@ func GetAvgUserRating(db *gorm.DB) {
 
 	util.PrettyPrint(result, "GetAvgUserRating: method")
 	fmt.Println("count: ", res.RowsAffected)
+}
+
+// List books with more than or equal to 2 reviews and an average rating > 4.
+func GetBooksWithCondReviewAndRaring(db *gorm.DB) {
+	type Result struct {
+		models.Book
+		TotalReviews float64 `json:"total_review"`
+		AvgRating    float64 `json:"avg_rating"`
+	}
+
+	// var books []models.Book
+	var books []Result
+	result := db.Model(&models.Book{}).
+		Joins("JOIN book_reviews br ON br.book_id = books.id").
+		Select("books.*, COUNT(br.id) AS total_reviews, AVG(br.rating) AS avg_rating").
+		Group("books.id").
+		Having("total_reviews >= ? AND avg_rating > ?", 2, 4).
+		Order("books.id DESC").
+		Preload("BookReviews", func(db *gorm.DB) *gorm.DB {
+			return db.Select("id", "book_id", "reviewer_id", "rating", "comment")
+		}).
+		Find(&books)
+
+	util.PrettyPrint(books, "GetBooksWithCondReviewAndRaring: method")
+	fmt.Println("\ncount: ", result.RowsAffected)
 }
