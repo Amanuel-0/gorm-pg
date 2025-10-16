@@ -100,3 +100,30 @@ func GetBooksWithCondReviewAndRaring(db *gorm.DB) {
 	util.PrettyPrint(books, "GetBooksWithCondReviewAndRaring: method")
 	fmt.Println("\ncount: ", result.RowsAffected)
 }
+
+// Count the number of messages sent per user per month.
+func ListUsersMessageStatsByMonth(db *gorm.DB) {
+	type Result struct {
+		models.User
+		// models.User `gorm:"embedded"` // to make sure fields are mapped correctly
+		Year  uint `json:"year"`
+		Month uint `json:"month"`
+		Count uint `json:"count"`
+	}
+	var results []Result
+	r := db.Model(&models.User{}).
+		Select("users.*, YEAR(msgs.created_at) AS year, MONTH(msgs.created_at) AS month, COUNT(msgs.id) AS count").
+		Joins("JOIN messages msgs ON msgs.sender_id = users.id").
+		Group("users.id, year, month").
+		Preload("UserProfile", func(db *gorm.DB) *gorm.DB {
+			return db.Select("user_id", "id", "bio", "avatar_url")
+		}).
+		Order("year DESC, month DESC, users.id").
+		Find(&results)
+
+		// Note: Preload - does not work with Scan
+		// Scan(&results)
+
+	util.PrettyPrint(results, "ListUsersMessageStatsByMonth: method")
+	fmt.Println("count: ", r.RowsAffected)
+}
