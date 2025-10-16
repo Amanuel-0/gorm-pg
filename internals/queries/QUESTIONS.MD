@@ -96,7 +96,7 @@ To help you **progressively build ORM mastery**, here’s a structured **skill r
  - [x] Count the number of messages sent per user per month.
  - [x] Find users who have never participated in an exchange.
  - [x] Calculate total revenue per month from `payments`.
- - [ ] List subscription plans ranked by active subscriber count.
+ - [x] List subscription plans ranked by active subscriber count.
  - [ ] Find users who have disputed exchanges.
  - [ ] Identify the most active communities (by number of messages).
 

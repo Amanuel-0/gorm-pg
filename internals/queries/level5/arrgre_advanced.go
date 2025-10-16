@@ -157,7 +157,7 @@ func TotalRevenuePerMonth(db *gorm.DB) {
 	}
 	var results []Result
 	r := db.Model(&models.Payment{}).
-		Select("payments.*, YEAR(created_at) AS year, MONTH(created_at) AS month, SUM(amount_cents) AS amount").
+		Select("YEAR(created_at) AS year, MONTH(created_at) AS month, SUM(amount_cents) AS amount").
 		Group("year, month").
 		Scan(&results)
 
@@ -167,4 +167,37 @@ func TotalRevenuePerMonth(db *gorm.DB) {
 
 	util.PrettyPrint(results, "TotalRevenuePerMonth: method")
 	fmt.Println("\ncount: ", r.RowsAffected)
+}
+
+// List subscription plans ranked by active subscriber count.
+func SubscriptionPlansRankedByActiveSubCount(db *gorm.DB) {
+	type Result struct {
+		models.SubscriptionPlan
+		SubCount uint `json:"sub_count"`
+	}
+	var results []Result
+	r := db.Model(&models.SubscriptionPlan{}).
+		// Select("subscription_plans.*, COUNT(s.id) AS sub_count").
+		Select(`
+			subscription_plans.id,
+			subscription_plans.slug,
+			subscription_plans.name,
+			subscription_plans.price_cents,
+			subscription_plans.currency,
+			subscription_plans.interval,
+			subscription_plans.active,
+			COUNT(s.id) AS sub_count
+		`).
+		Joins("LEFT JOIN subscriptions s ON s.plan_id = subscription_plans.id AND s.status = ?", models.SubscriptionStatusActive). // filter active subs here
+		Group("subscription_plans.id").
+		Order("sub_count DESC").
+		Scan(&results)
+
+	if r.Error != nil {
+		fmt.Printf("error fetching ranked sub plan: %v", r.Error)
+	}
+
+	util.PrettyPrint(results, "SubscriptionPlansRankedByActiveSubCount: method")
+	fmt.Println("count: ", r.RowsAffected)
+
 }
